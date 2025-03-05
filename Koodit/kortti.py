@@ -48,5 +48,5 @@ class Kortti:
 
     # Kortin merkkijonoesitys
     def __str__(self):
-        str = f"{self.maa}-{self.arvo_poydassa}"
+        str = f"{self.maa}-{self.nimi}"
         return str

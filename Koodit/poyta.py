@@ -15,6 +15,10 @@ class Poyta:
     def poista_kortti_poydasta(self, kortti):
         self.poydan_kortit.remove(kortti)
 
+    # Lisää kortin pakkaan
+    def lisaa_kortti_pakkaan(self, kortti):
+        self.poydan_kortit.append(kortti)
+
     # Poistaa kortin pakasta
     def poista_kortti_pakasta(self, kortti):
         self.pakka.remove(kortti)

@@ -2,19 +2,23 @@ from kortti import Kortti
 
 class Pelaaja:
 
+    # Pelaaja-olion alustus
     def __init__(self, nimi):
-        self.nimi = nimi
-        self.kasi = []
-        self.pino = []
-        self.mokit = 0
-        self.pisteet = 0
+        self.nimi = nimi    # Pelaajan nimi
+        self.kasi = []      # Lista pelaajan kädessä olevia Kortti-olioita
+        self.pino = []      # Lista pelaajan kierroksen aikana keräämiä Kortti-olioita
+        self.mokit = 0      # Pelaajan mökit (kokonaislukuarvo)
+        self.pisteet = 0    # Pelaajan pisteet (kokonaislukuarvo)
 
+    # Lisää kortin pelaajan käteen
     def lisaa_kortti_kateen(self, kortti):
         self.kasi.append(kortti)
 
+    # Lisää kortin pelaajan pinoon
     def lisaa_kortti_pinoon(self, kortti):
         self.pino.append(kortti)
 
+    # Poistaa kortin pelaajan kädestä
     def poista_kortti_kadesta(self, kortti):
         self.pino.remove(kortti)
 

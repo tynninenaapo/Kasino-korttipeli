@@ -4,12 +4,15 @@ RUUTU10_KADESSA = 16
 
 class Kortti:
 
+    # Kortti-olion alustus
     def __init__(self, maa, arvo):
-        self.maa = maa
-        self.arvo_kadessa = self.aseta_arvo_kadessa(maa, arvo)
-        self.arvo_poydassa = arvo
-        self.nimi = self.aseta_nimi(arvo)
+        self.maa = maa  # Pata, Risti, Ruutu tai Hertta
+        self.arvo_kadessa = self.aseta_arvo_kadessa(maa, arvo)  # Kokonaislukuarvo 2-16
+        self.arvo_poydassa = arvo  # Kokonaislukuarvo 1-13
+        self.nimi = self.aseta_nimi(arvo)  # Numerokorteilla oma arvo merkkijonona
+        # ja kuvakorteilla omansa
 
+    # Erikoiskorttien arvon asettaminen
     def aseta_arvo_kadessa(self, maa, arvo):
         if arvo == 1:
             return ASSA_KADESSA
@@ -19,6 +22,7 @@ class Kortti:
             return RUUTU10_KADESSA
         return arvo
 
+    # Nimen asettaminen
     def aseta_nimi(self, arvo):
         if arvo == 1:
             return "Ässä"
@@ -42,6 +46,7 @@ class Kortti:
     def hanki_nimi(self):
         return self.nimi
 
+    # Kortin merkkijonoesitys
     def __str__(self):
         str = f"{self.maa}-{self.arvo_poydassa}"
         return str

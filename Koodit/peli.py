@@ -1,6 +1,7 @@
 from kortti import Kortti
 from pelaaja import Pelaaja
 from poyta import Poyta
+import random
 
 MAAT = ["Pata", "Risti", "Ruutu", "Hertta"]
 
@@ -23,6 +24,17 @@ class Peli:
             for alkio2 in range(1, 14):
                 kortti = Kortti(alkio1, alkio2)
                 self.poyta.lisaa_kortti_pakkaan(kortti)
+
+    # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
+    def jaa_kortit(self):
+        for i in range(4 * (len(self.pelaajat) + 1)):
+            satunnainen_kortti = random.choice(self.poyta.pakka)
+            if i % (len(self.pelaajat) + 1) == len(self.pelaajat):
+                self.poyta.lisaa_kortti_poytaan(satunnainen_kortti)
+                self.poyta.poista_kortti_pakasta(satunnainen_kortti)
+                continue
+            self.pelaajat[i % (len(self.pelaajat) + 1)].lisaa_kortti_kateen(satunnainen_kortti)
+            self.poyta.poista_kortti_pakasta(satunnainen_kortti)
 
     # Tarkistaa korttien laillisuuden
     # Jos kortit ovat lailliset, palauttaa True, muuten False
@@ -81,12 +93,12 @@ class Peli:
                 if kortti.hanki_arvo_poydassa() == 1:
                     pelaaja.pisteet += 1
             if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
-                if len(pelaaja.pino) == len(eniten_kortteja.pino):
+                if len(pelaaja.pino) == len(eniten_kortteja.pino) and not pelaaja == eniten_kortteja:
                     eniten_kortteja = pelaaja, eniten_kortteja
                 else:
                     eniten_kortteja = pelaaja
             if pelaaja.padat_pinossa >= eniten_patoja.padat_pinossa:
-                if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa:
+                if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa and not pelaaja == eniten_patoja:
                     eniten_patoja = pelaaja, eniten_patoja
                 else:
                     eniten_patoja = pelaaja
@@ -100,9 +112,6 @@ class Peli:
         else:
             for pelaaja in eniten_patoja:
                 pelaaja.pisteet += 2
-
-
-
 
     # Pelaaja pelaa kortin
     def pelaa_kortti(self, pelaaja, pelattu_kortti, valitut_kortit):

@@ -121,11 +121,21 @@ class Peli:
             for kortti in valitut_kortit:
                 self.poyta.poista_kortti_poydasta(kortti)
                 pelaaja.lisaa_kortti_pinoon(kortti)
+        if len(self.poyta.poydan_kortit) == 0:
+            pelaaja.mokit += 1
+        self.nosta_kortti(pelaaja)
 
     # Pelaaja laittaa kortin pöytään
     def laita_kortti_poytaan(self, pelaaja, kortti):
         pelaaja.poista_kortti_kadesta(kortti)
         self.poyta.lisaa_kortti_poytaan(kortti)
+        self.nosta_kortti(pelaaja)
+
+    # Valitsee pakasta satunnaisen kortin ja lisää pelaajan käteen
+    def nosta_kortti(self, pelaaja):
+        satunnainen_kortti = random.choice(self.poyta.pakka)
+        pelaaja.lisaa_kortti_kateen(satunnainen_kortti)
+        self.poyta.poista_kortti_pakasta(satunnainen_kortti)
 
     # Parametrina lista kortteja
     # Summaa korttien arvot pöydässä yhteen

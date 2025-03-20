@@ -9,6 +9,7 @@ class Pelaaja:
         self.pino = []      # Lista pelaajan kierroksen aikana keräämiä Kortti-olioita
         self.mokit = 0      # Pelaajan mökit (kokonaislukuarvo)
         self.pisteet = 0    # Pelaajan pisteet (kokonaislukuarvo)
+        self.padat_pinossa = 0      # Patakortit pelaajan pinossa pistelaskua varten (kokonaislukuarvo)
 
     # Lisää kortin pelaajan käteen
     def lisaa_kortti_kateen(self, kortti):

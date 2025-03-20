@@ -48,16 +48,25 @@ class Peli:
             return True
         # Tarkistetaan onko jäljellä olevien summa pelatun kortin arvon monikerta
         if self.summaa_kortit_poydassa(valitut_kortit) % pelattu_kortti.hanki_arvo_kadessa() == 0:
-            # Käydään läpi kaikki mahdolliset kombinaatiot:
-            i = 1
-            while i < len(valitut_kortit):
-                j = 0
-                while j < len(valitut_kortit) - i:
-                    summa = self.summaa_kortit_poydassa(valitut_kortit[j : j + i])
-                    if summa == pelattu_kortti.hanki_arvo_kadessa():
-                        del valitut_kortit[j : j + i + 1]
-                    j += 1
-                i += 1
+            uusi_valitut_kortit = []
+            # Käydään läpi kaikki mahdolliset osajoukot käyttäen bittitason operaatioita
+            for maski in range(1, 2 ** len(valitut_kortit)):
+                osajoukko = []
+                summa = 0
+                for i in range(1, len(valitut_kortit)):
+                    if maski & (1 << i):
+                        osajoukko.append(valitut_kortit[i])
+                        summa += valitut_kortit[i]
+                if summa == pelattu_kortti.hanki_arvo_kadessa():
+                    for kortti in osajoukko:
+                        uusi_valitut_kortit.append(kortti)
+            if set(valitut_kortit) == set(uusi_valitut_kortit):
+                return True
+        return False
+
+
+
+
 
     # Pelaaja pelaa kortin
     def pelaa_kortti(self, pelaaja, pelattu_kortti, valitut_kortit):

@@ -41,7 +41,7 @@ class Peli:
         # Tapaus, jossa valitut kortit sisältävät useamman yhdistelmän, joiden arvo on pelatun kortin arvo
         for kortti in valitut_kortit:
             # Poistetaan listasta kortit, joiden arvo on sama kuin pelatulla kortilla
-            if kortti.hanki_arvo_poydassa == pelattu_kortti.hanki_arvo_kadessa():
+            if kortti.hanki_arvo_poydassa() == pelattu_kortti.hanki_arvo_kadessa():
                 valitut_kortit.remove(kortti)
         # Tarkistetaan jäljellä olevien summa
         if pelattu_kortti.hanki_arvo_kadessa() == self.summaa_kortit_poydassa(valitut_kortit):
@@ -53,10 +53,10 @@ class Peli:
             for maski in range(1, 2 ** len(valitut_kortit)):
                 osajoukko = []
                 summa = 0
-                for i in range(1, len(valitut_kortit)):
+                for i in range(0, len(valitut_kortit)):
                     if maski & (1 << i):
                         osajoukko.append(valitut_kortit[i])
-                        summa += valitut_kortit[i]
+                        summa += valitut_kortit[i].hanki_arvo_poydassa()
                 if summa == pelattu_kortti.hanki_arvo_kadessa():
                     for kortti in osajoukko:
                         uusi_valitut_kortit.append(kortti)

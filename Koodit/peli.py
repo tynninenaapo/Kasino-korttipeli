@@ -64,6 +64,41 @@ class Peli:
                 return True
         return False
 
+    def laske_pisteet(self):
+        eniten_kortteja = self.pelaajat[0]
+        eniten_patoja = self.pelaajat[0]
+        for pelaaja in self.pelaajat:
+            pelaaja.pisteet += pelaaja.hanki_mokit()
+            pelaaja.mokit = 0
+            for kortti in pelaaja.hanki_pino():
+                if kortti.hanki_maa() == "Ruutu" and kortti.hanki_arvo_poydassa() == 10:
+                    pelaaja.pisteet += 2
+                if kortti.hanki_maa() == "Pata":
+                    pelaaja.padat_pinossa += 1
+                    if kortti.hanki_arvo_poydassa() == 2:
+                        pelaaja.pisteet += 1
+                if kortti.hanki_arvo_poydassa() == 1:
+                    pelaaja.pisteet += 1
+            if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
+                if len(pelaaja.pino) == len(eniten_kortteja.pino):
+                    eniten_kortteja = pelaaja, eniten_kortteja
+                else:
+                    eniten_kortteja = pelaaja
+            if pelaaja.padat_pinossa >= eniten_patoja.padat_pinossa:
+                if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa:
+                    eniten_patoja = pelaaja, eniten_patoja
+                else:
+                    eniten_patoja = pelaaja
+        if len(eniten_kortteja) == 1:
+            eniten_kortteja.pisteet += 1
+        else:
+            for pelaaja in eniten_kortteja:
+                pelaaja.pisteet += 1
+        if len(eniten_patoja) == 1:
+            eniten_patoja.pisteet += 2
+        else:
+            for pelaaja in eniten_patoja:
+                pelaaja.pisteet += 2
 
 
 

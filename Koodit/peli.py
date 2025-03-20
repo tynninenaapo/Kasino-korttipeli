@@ -64,6 +64,7 @@ class Peli:
                 return True
         return False
 
+    # Vertailee pelaajien korttipinoja ja antaa pisteitä sääntöjen mukaisesti
     def laske_pisteet(self):
         eniten_kortteja = self.pelaajat[0]
         eniten_patoja = self.pelaajat[0]

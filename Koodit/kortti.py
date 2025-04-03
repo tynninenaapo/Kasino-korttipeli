@@ -25,9 +25,9 @@ class Kortti:
     # Nimen asettaminen
     def aseta_nimi(self, arvo):
         if arvo == 1:
-            return "Ässä"
+            return "Assa"
         if arvo == 11:
-            return "Jätkä"
+            return "Jatka"
         if arvo == 12:
             return "Kuningatar"
         if arvo == 13:

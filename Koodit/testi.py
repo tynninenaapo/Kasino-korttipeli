@@ -6,8 +6,7 @@ from peli import Peli
 class Testi(unittest.TestCase):
 
     def testaa_korttien_tarkistusta1(self):
-        poyta = Poyta()
-        peli = Peli(poyta)
+        peli = Peli()
 
         valitut_kortit = [Kortti("Ruutu", 10)]
         pelattu_kortti = Kortti("Pata", 10)
@@ -17,29 +16,27 @@ class Testi(unittest.TestCase):
         self.assertFalse(peli.tarkista_kortti(pelattu_kortti, valitut_kortit))
 
     def testaa_korttien_tarkistusta2(self):
-        poyta = Poyta()
-        peli = Peli(poyta)
+        peli = Peli()
 
         valitut_kortit = [Kortti("Pata", 4), Kortti("Ruutu", 7)]
         pelattu_kortti = Kortti("Hertta", 11)
         self.assertTrue(peli.tarkista_kortti(pelattu_kortti, valitut_kortit))
 
     def testaa_korttien_tarkistusta3(self):
-        poyta = Poyta()
-        peli = Peli(poyta)
+        peli = Peli()
 
         valitut_kortit = [Kortti("Pata", 4), Kortti("Ruutu", 7), Kortti("Hertta", 11)]
         pelattu_kortti = Kortti("Risti", 11)
         self.assertTrue(peli.tarkista_kortti(pelattu_kortti, valitut_kortit))
 
     def testaa_korttien_tarkistusta4(self):
-        poyta = Poyta()
-        peli = Peli(poyta)
+        peli = Peli()
 
         valitut_kortit = [Kortti("Pata", 4), Kortti("Ruutu", 7),
                           Kortti("Hertta", 11), Kortti("Risti", 8), Kortti("Pata", 3)]
         pelattu_kortti = Kortti("Risti", 11)
         self.assertTrue(peli.tarkista_kortti(pelattu_kortti, valitut_kortit))
+
 
 if __name__ == '__main__':
     unittest.main()

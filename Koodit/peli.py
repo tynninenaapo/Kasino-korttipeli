@@ -78,7 +78,7 @@ class Peli:
         for rivi in tiedosto:
             i = 0
             rivi = rivi.rstrip()
-            nimen_pituus = int(rivi[i:i + 1])
+            nimen_pituus = int(rivi[i:i + 2])
             i += 2
             if nimen_pituus == 99:
                 kortit = rivi
@@ -87,13 +87,13 @@ class Peli:
             i += nimen_pituus
             pelaaja = Pelaaja(nimi)
             self.pelaajat.append(pelaaja)
-            mokit = int(rivi[i:i + 1])
+            mokit = int(rivi[i:i + 2])
             pelaaja.mokit = mokit
             i += 2
-            pisteet = int(rivi[i:i + 1])
+            pisteet = int(rivi[i:i + 2])
             pelaaja.pisteet = pisteet
             i += 2
-            pituus = int(rivi[i:i + 1])
+            pituus = int(rivi[i:i + 2])
             i += 2
             while pituus != 99:
                 str = rivi[i:i + pituus]
@@ -107,21 +107,21 @@ class Peli:
                     maa = "Ruutu"
                 else:
                     maa = "Hertta"
-                if osat[1] == "Ässä":
+                if osat[1] == "Assa":
                     arvo = 1
                 elif osat[1] == "Kuningas":
                     arvo = 13
                 elif osat[1] == "Kuningatar":
                     arvo = 12
-                elif osat[1] == "Jätkä":
+                elif osat[1] == "Jatka":
                     arvo = 11
                 else:
                     arvo = int(osat[1])
                 kortti = Kortti(maa, arvo)
                 pelaaja.lisaa_kortti_kateen(kortti)
-                pituus = int(rivi[i:i + 1])
+                pituus = int(rivi[i:i + 2])
                 i += 2
-            pituus = rivi[i:i + 1]
+            pituus = int(rivi[i:i + 2])
             i += 2
             while pituus != 99:
                 str = rivi[i:i + pituus]
@@ -135,21 +135,21 @@ class Peli:
                     maa = "Ruutu"
                 else:
                     maa = "Hertta"
-                if osat[1] == "Ässä":
+                if osat[1] == "Assa":
                     arvo = 1
                 elif osat[1] == "Kuningas":
                     arvo = 13
                 elif osat[1] == "Kuningatar":
                     arvo = 12
-                elif osat[1] == "Jätkä":
+                elif osat[1] == "Jatka":
                     arvo = 11
                 else:
                     arvo = int(osat[1])
                 kortti = Kortti(maa, arvo)
                 pelaaja.lisaa_kortti_pinoon(kortti)
-                pituus = int(rivi[i:i + 1])
-        i = 0
-        pituus = int(kortit[i:i + 1])
+                pituus = int(rivi[i:i + 2])
+        i = 2
+        pituus = int(kortit[i:i + 2])
         i += 2
         while pituus != "99":
             str = kortit[i:i + pituus]
@@ -163,19 +163,20 @@ class Peli:
                 maa = "Ruutu"
             else:
                 maa = "Hertta"
-            if osat[1] == "Ässä":
+            if osat[1] == "Assa":
                 arvo = 1
             elif osat[1] == "Kuningas":
                 arvo = 13
             elif osat[1] == "Kuningatar":
                 arvo = 12
-            elif osat[1] == "Jätkä":
+            elif osat[1] == "Jatka":
                 arvo = 11
             else:
                 arvo = int(osat[1])
             kortti = Kortti(maa, arvo)
             self.poyta.lisaa_kortti_pakkaan(kortti)
-            pituus = int(kortit[i:i + 1])
+            pituus = int(kortit[i:i + 2])
+            i += 2
         while pituus != "99":
             str = kortit[i:i + pituus]
             i += pituus
@@ -188,19 +189,19 @@ class Peli:
                 maa = "Ruutu"
             else:
                 maa = "Hertta"
-            if osat[1] == "Ässä":
+            if osat[1] == "Assa":
                 arvo = 1
             elif osat[1] == "Kuningas":
                 arvo = 13
             elif osat[1] == "Kuningatar":
                 arvo = 12
-            elif osat[1] == "Jätkä":
+            elif osat[1] == "Jatka":
                 arvo = 11
             else:
                 arvo = int(osat[1])
             kortti = Kortti(maa, arvo)
             self.poyta.lisaa_kortti_poytaan(kortti)
-            pituus = int(kortit[i:i + 1])
+            pituus = int(kortit[i:i + 2])
             i += 2
         tiedosto.close()
 

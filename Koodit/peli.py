@@ -49,7 +49,7 @@ class Peli:
                     str += f"{len(kortti.__str__())}{kortti.__str__()}"
             str += "99"
             for kortti in pelaaja.hanki_pino():
-                if len(kortti.__str__() < 10):
+                if len(kortti.__str__()) < 10:
                     str += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     str += f"{len(kortti.__str__())}{kortti.__str__()}"

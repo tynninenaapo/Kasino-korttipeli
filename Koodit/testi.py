@@ -38,7 +38,7 @@ class Testi(unittest.TestCase):
         pelattu_kortti = Kortti("Risti", 11)
         self.assertTrue(peli.tarkista_kortti(pelattu_kortti, valitut_kortit))
 
-    def testaa_korttienjakoa_ja_tiedostoa(self):
+    def testaa_korttienjakoa_ja_kirjoitusta(self):
         peli = Peli()
 
         pelaaja1 = Pelaaja("Pelaaja1")
@@ -54,6 +54,15 @@ class Testi(unittest.TestCase):
         self.assertEqual(len(peli.poyta.poydan_kortit), 4)
 
         peli.kirjoita_pelitilanne()
+
+    def testaa_lukua(self):
+        peli = Peli()
+
+        peli.lue_pelitilanne()
+        self.assertEqual(len(peli.pelaajat), 2)
+        self.assertEqual(len(peli.pelaajat[0].hanki_kasi()), 4)
+        self.assertEqual(len(peli.pelaajat[1].hanki_kasi()), 4)
+        self.assertEqual(len(peli.poyta.poydan_kortit), 4)
 
 
 

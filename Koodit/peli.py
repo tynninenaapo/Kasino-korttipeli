@@ -25,6 +25,60 @@ class Peli:
                 kortti = Kortti(alkio1, alkio2)
                 self.poyta.lisaa_kortti_pakkaan(kortti)
 
+    # Kirjoittaa pelitilanteen tiedostoon "pelitilanne.txt"
+    def kirjoita_pelitilanne(self):
+        tiedosto = open("pelitilanne.txt", "w")
+        str = ""
+        for pelaaja in self.pelaajat:
+            if len(pelaaja.hanki_nimi()) < 10:
+                str += f"0{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
+            else:
+                str += f"{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
+            if pelaaja.hanki_mokit() < 10:
+                str += f"0{pelaaja.hanki_mokit()}"
+            else:
+                str += f"{pelaaja.hanki_mokit()}"
+            if pelaaja.hanki_pisteet() < 10:
+                str += f"0{pelaaja.hanki_pisteet()}"
+            else:
+                str += f"{pelaaja.hanki_pisteet()}"
+            if len(pelaaja.hanki_kasi()) < 10:
+                str += f"0{len(pelaaja.hanki_kasi())}"
+            else:
+                str += f"{len(pelaaja.hanki_kasi())}"
+            for kortti in pelaaja.hanki_kasi():
+                if len(kortti.__str__() < 10):
+                    str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+                else:
+                    str += f"{len(kortti.__str__())}{kortti.__str__()}"
+            str += "XX"
+            for kortti in pelaaja.hanki_pino():
+                if len(kortti.__str__() < 10):
+                    str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+                else:
+                    str += f"{len(kortti.__str__())}{kortti.__str__()}"
+        tiedosto.write(str)
+        str = ""
+        if len(self.poyta.pakka) < 10:
+            str += f"0{len(self.poyta.pakka)}"
+        else:
+            str += f"{len(self.poyta.pakka)}"
+        for kortti in self.poyta.pakka:
+            if len(kortti.__str__() < 10):
+                str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+            else:
+                str += f"{len(kortti.__str__())}{kortti.__str__()}"
+        if len(self.poyta.poydan_kortit) < 10:
+            str += f"0{len(self.poyta.poydan_kortit)}"
+        else:
+            str += f"{len(self.poyta.poydan_kortit)}"
+        for kortti in self.poyta.poydan_kortit:
+            if len(kortti.__str__() < 10):
+                str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+            else:
+                str += f"{len(kortti.__str__())}{kortti.__str__()}"
+        tiedosto.write(str)
+
     # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
     def jaa_kortit(self):
         for i in range(4 * (len(self.pelaajat) + 1)):
@@ -92,16 +146,16 @@ class Peli:
                         pelaaja.pisteet += 1
                 if kortti.hanki_arvo_poydassa() == 1:
                     pelaaja.pisteet += 1
-            if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
-                if len(pelaaja.pino) == len(eniten_kortteja.pino) and not pelaaja == eniten_kortteja:
-                    eniten_kortteja = pelaaja, eniten_kortteja
-                else:
-                    eniten_kortteja = pelaaja
-            if pelaaja.padat_pinossa >= eniten_patoja.padat_pinossa:
-                if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa and not pelaaja == eniten_patoja:
-                    eniten_patoja = pelaaja, eniten_patoja
-                else:
-                    eniten_patoja = pelaaja
+                if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
+                    if len(pelaaja.pino) == len(eniten_kortteja.pino) and not pelaaja == eniten_kortteja:
+                        eniten_kortteja = pelaaja, eniten_kortteja
+                    else:
+                        eniten_kortteja = pelaaja
+                if pelaaja.padat_pinossa >= eniten_patoja.padat_pinossa:
+                    if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa and not pelaaja == eniten_patoja:
+                        eniten_patoja = pelaaja, eniten_patoja
+                    else:
+                        eniten_patoja = pelaaja
         if len(eniten_kortteja) == 1:
             eniten_kortteja.pisteet += 1
         else:

@@ -10,9 +10,9 @@ MAAT = ["Pata", "Risti", "Ruutu", "Hertta"]
 class Peli:
 
     # Alustaaa Peli-olion
-    def __init__(self, poyta):
+    def __init__(self):
         self.pelaajat = []      # Lista Pelaaja-olioita
-        self.poyta = poyta
+        self.poyta = Poyta()
 
     # Lisää pelaajan pelaajalistaan
     def lisaa_pelaaja(self, pelaaja):
@@ -74,7 +74,6 @@ class Peli:
     # Lukee pelitilanteen tiedostosta "pelitilanne.txt"
     def lue_pelitilanne(self):
         tiedosto = open("pelitilanne.txt", "r")
-        poyta = Poyta()
         kortit = ""
         for rivi in tiedosto:
             i = 0
@@ -175,7 +174,7 @@ class Peli:
             else:
                 arvo = int(osat[1])
             kortti = Kortti(maa, arvo)
-            poyta.lisaa_kortti_pakkaan(kortti)
+            self.poyta.lisaa_kortti_pakkaan(kortti)
             pituus = int(kortit[i:i + 1])
         while pituus != "99":
             str = kortit[i:i + pituus]
@@ -200,7 +199,7 @@ class Peli:
             else:
                 arvo = int(osat[1])
             kortti = Kortti(maa, arvo)
-            poyta.lisaa_kortti_poytaan(kortti)
+            self.poyta.lisaa_kortti_poytaan(kortti)
             pituus = int(kortit[i:i + 1])
             i += 2
         tiedosto.close()

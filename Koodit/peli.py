@@ -42,42 +42,173 @@ class Peli:
                 str += f"0{pelaaja.hanki_pisteet()}"
             else:
                 str += f"{pelaaja.hanki_pisteet()}"
-            if len(pelaaja.hanki_kasi()) < 10:
-                str += f"0{len(pelaaja.hanki_kasi())}"
-            else:
-                str += f"{len(pelaaja.hanki_kasi())}"
             for kortti in pelaaja.hanki_kasi():
                 if len(kortti.__str__() < 10):
                     str += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     str += f"{len(kortti.__str__())}{kortti.__str__()}"
-            str += "XX"
+            str += "99"
             for kortti in pelaaja.hanki_pino():
                 if len(kortti.__str__() < 10):
                     str += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     str += f"{len(kortti.__str__())}{kortti.__str__()}"
-        tiedosto.write(str)
-        str = ""
-        if len(self.poyta.pakka) < 10:
-            str += f"0{len(self.poyta.pakka)}"
-        else:
-            str += f"{len(self.poyta.pakka)}"
+            str += "99"
+            tiedosto.write(str)
+        str = "99"
         for kortti in self.poyta.pakka:
             if len(kortti.__str__() < 10):
                 str += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
                 str += f"{len(kortti.__str__())}{kortti.__str__()}"
-        if len(self.poyta.poydan_kortit) < 10:
-            str += f"0{len(self.poyta.poydan_kortit)}"
-        else:
-            str += f"{len(self.poyta.poydan_kortit)}"
+        str += "99"
         for kortti in self.poyta.poydan_kortit:
             if len(kortti.__str__() < 10):
                 str += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
                 str += f"{len(kortti.__str__())}{kortti.__str__()}"
+        str += "99"
         tiedosto.write(str)
+        tiedosto.close()
+
+    # Lukee pelitilanteen tiedostosta "pelitilanne.txt"
+    def lue_pelitilanne(self):
+        tiedosto = open("pelitilanne.txt", "r")
+        poyta = Poyta()
+        kortit = ""
+        for rivi in tiedosto:
+            i = 0
+            rivi = rivi.rstrip()
+            nimen_pituus = int(rivi[i:i + 1])
+            i += 2
+            if nimen_pituus == 99:
+                kortit = rivi
+                break
+            nimi = rivi[i:i + nimen_pituus]
+            i += nimen_pituus
+            pelaaja = Pelaaja(nimi)
+            mokit = int(rivi[i:i + 1])
+            pelaaja.mokit = mokit
+            i += 2
+            pisteet = int(rivi[i:i + 1])
+            pelaaja.pisteet = pisteet
+            i += 2
+            pituus = int(rivi[i:i + 1])
+            i += 2
+            while pituus != 99:
+                str = rivi[i:i + pituus]
+                i += pituus
+                osat = str.split("-")
+                if osat[0] == "Pata":
+                    maa = "Pata"
+                elif osat[0] == "Risti":
+                    maa = "Risti"
+                elif osat[0] == "Ruutu":
+                    maa = "Ruutu"
+                else:
+                    maa = "Hertta"
+                if osat[1] == "Ässä":
+                    arvo = 1
+                elif osat[1] == "Kuningas":
+                    arvo = 13
+                elif osat[1] == "Kuningatar":
+                    arvo = 12
+                elif osat[1] == "Jätkä":
+                    arvo = 11
+                else:
+                    arvo = int(osat[1])
+                kortti = Kortti(maa, arvo)
+                pelaaja.lisaa_kortti_kateen(kortti)
+                pituus = int(rivi[i:i + 1])
+                i += 2
+            pituus = rivi[i:i + 1]
+            i += 2
+            while pituus != 99:
+                str = rivi[i:i + pituus]
+                i += pituus
+                osat = str.split("-")
+                if osat[0] == "Pata":
+                    maa = "Pata"
+                elif osat[0] == "Risti":
+                    maa = "Risti"
+                elif osat[0] == "Ruutu":
+                    maa = "Ruutu"
+                else:
+                    maa = "Hertta"
+                if osat[1] == "Ässä":
+                    arvo = 1
+                elif osat[1] == "Kuningas":
+                    arvo = 13
+                elif osat[1] == "Kuningatar":
+                    arvo = 12
+                elif osat[1] == "Jätkä":
+                    arvo = 11
+                else:
+                    arvo = int(osat[1])
+                kortti = Kortti(maa, arvo)
+                pelaaja.lisaa_kortti_pinoon(kortti)
+                pituus = int(rivi[i:i + 1])
+        i = 0
+        pituus = int(kortit[i:i + 1])
+        i += 2
+        while pituus != "99":
+            str = kortit[i:i + pituus]
+            i += pituus
+            osat = str.split("-")
+            if osat[0] == "Pata":
+                maa = "Pata"
+            elif osat[0] == "Risti":
+                maa = "Risti"
+            elif osat[0] == "Ruutu":
+                maa = "Ruutu"
+            else:
+                maa = "Hertta"
+            if osat[1] == "Ässä":
+                arvo = 1
+            elif osat[1] == "Kuningas":
+                arvo = 13
+            elif osat[1] == "Kuningatar":
+                arvo = 12
+            elif osat[1] == "Jätkä":
+                arvo = 11
+            else:
+                arvo = int(osat[1])
+            kortti = Kortti(maa, arvo)
+            poyta.lisaa_kortti_pakkaan(kortti)
+            pituus = int(kortit[i:i + 1])
+        while pituus != "99":
+            str = kortit[i:i + pituus]
+            i += pituus
+            osat = str.split("-")
+            if osat[0] == "Pata":
+                maa = "Pata"
+            elif osat[0] == "Risti":
+                maa = "Risti"
+            elif osat[0] == "Ruutu":
+                maa = "Ruutu"
+            else:
+                maa = "Hertta"
+            if osat[1] == "Ässä":
+                arvo = 1
+            elif osat[1] == "Kuningas":
+                arvo = 13
+            elif osat[1] == "Kuningatar":
+                arvo = 12
+            elif osat[1] == "Jätkä":
+                arvo = 11
+            else:
+                arvo = int(osat[1])
+            kortti = Kortti(maa, arvo)
+            poyta.lisaa_kortti_poytaan(kortti)
+            pituus = int(kortit[i:i + 1])
+            i += 2
+
+
+
+
+
+
+
 
     # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
     def jaa_kortit(self):

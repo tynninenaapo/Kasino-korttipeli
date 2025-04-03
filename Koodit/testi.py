@@ -2,6 +2,7 @@ import unittest
 from kortti import Kortti
 from poyta import Poyta
 from peli import Peli
+from pelaaja import Pelaaja
 
 class Testi(unittest.TestCase):
 
@@ -36,6 +37,24 @@ class Testi(unittest.TestCase):
                           Kortti("Hertta", 11), Kortti("Risti", 8), Kortti("Pata", 3)]
         pelattu_kortti = Kortti("Risti", 11)
         self.assertTrue(peli.tarkista_kortti(pelattu_kortti, valitut_kortit))
+
+    def testaa_korttienjakoa_ja_tiedostoa(self):
+        peli = Peli()
+
+        pelaaja1 = Pelaaja("Pelaaja1")
+        peli.lisaa_pelaaja(pelaaja1)
+        pelaaja2 = Pelaaja("Pelaaja2")
+        peli.lisaa_pelaaja(pelaaja2)
+
+        peli.luo_pakka()
+        peli.jaa_kortit()
+
+        self.assertEqual(len(pelaaja1.hanki_kasi()), 4)
+        self.assertEqual(len(pelaaja2.hanki_kasi()), 4)
+        self.assertEqual(len(peli.poyta.poydan_kortit), 4)
+
+        peli.kirjoita_pelitilanne()
+
 
 
 if __name__ == '__main__':

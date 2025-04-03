@@ -28,8 +28,8 @@ class Peli:
     # Kirjoittaa pelitilanteen tiedostoon "pelitilanne.txt"
     def kirjoita_pelitilanne(self):
         tiedosto = open("pelitilanne.txt", "w")
-        str = ""
         for pelaaja in self.pelaajat:
+            str = ""
             if len(pelaaja.hanki_nimi()) < 10:
                 str += f"0{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
             else:
@@ -43,7 +43,7 @@ class Peli:
             else:
                 str += f"{pelaaja.hanki_pisteet()}"
             for kortti in pelaaja.hanki_kasi():
-                if len(kortti.__str__() < 10):
+                if len(kortti.__str__()) < 10:
                     str += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     str += f"{len(kortti.__str__())}{kortti.__str__()}"
@@ -53,17 +53,17 @@ class Peli:
                     str += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     str += f"{len(kortti.__str__())}{kortti.__str__()}"
-            str += "99"
+            str += "99\n"
             tiedosto.write(str)
         str = "99"
         for kortti in self.poyta.pakka:
-            if len(kortti.__str__() < 10):
+            if len(kortti.__str__()) < 10:
                 str += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
                 str += f"{len(kortti.__str__())}{kortti.__str__()}"
         str += "99"
         for kortti in self.poyta.poydan_kortit:
-            if len(kortti.__str__() < 10):
+            if len(kortti.__str__()) < 10:
                 str += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
                 str += f"{len(kortti.__str__())}{kortti.__str__()}"

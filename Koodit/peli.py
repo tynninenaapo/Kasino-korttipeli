@@ -87,6 +87,7 @@ class Peli:
             nimi = rivi[i:i + nimen_pituus]
             i += nimen_pituus
             pelaaja = Pelaaja(nimi)
+            self.pelaajat.append(pelaaja)
             mokit = int(rivi[i:i + 1])
             pelaaja.mokit = mokit
             i += 2
@@ -202,13 +203,7 @@ class Peli:
             poyta.lisaa_kortti_poytaan(kortti)
             pituus = int(kortit[i:i + 1])
             i += 2
-
-
-
-
-
-
-
+        tiedosto.close()
 
     # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
     def jaa_kortit(self):

@@ -151,7 +151,7 @@ class Peli:
         i = 2
         pituus = int(kortit[i:i + 2])
         i += 2
-        while pituus != "99":
+        while pituus != 99:
             str = kortit[i:i + pituus]
             i += pituus
             osat = str.split("-")
@@ -177,7 +177,9 @@ class Peli:
             self.poyta.lisaa_kortti_pakkaan(kortti)
             pituus = int(kortit[i:i + 2])
             i += 2
-        while pituus != "99":
+        pituus = int(kortit[i:i + 2])
+        i += 2
+        while pituus != 99:
             str = kortit[i:i + pituus]
             i += pituus
             osat = str.split("-")

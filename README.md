@@ -1,13 +1,13 @@
 # Y2_2025_74912
 
-## Checkpoint3 
+## Checkpoint6
 
 ## Tämänhetkiset ominaisuudet
 
 Ohjelmaan on toteutettu perusluokat Kortti, Pelaaja ja Pöytä, sekä nämä
 luokat yhteen tuova peliä ylläpitävä luokka Peli. Peli-loukkaan on toteutettu toimiva
-korttientarkistusmetodi ja alustava pistelaskumetodi. Korttientarkistusmetodille on toteutettu
-myös yksikkötestit.
+korttientarkistusmetodi, pistelaskumetodi ja pelitilanteen tallennusta varten tiedostoonkirjoitus-
+ja tiedostostalukumetodi. Korttientarkistusmetodille ja tiedostostaluku- sekä tiedostoonkirjoittamismetodeille on toteutettu myös yksikkötestit.
 
 ## Käyttöohje
 
@@ -15,7 +15,7 @@ myös yksikkötestit.
 
 ## Aikataulu
 
-  - Olen käyttänyt projektiin noin 12 tuntia
+  - Olen käyttänyt projektiin noin 18 tuntia
   - Aikataulu on edennyt odotusten mukaisesti
 
 ## Muuta

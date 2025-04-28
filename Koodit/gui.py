@@ -33,8 +33,8 @@ class Aloitusikkuna(QMainWindow):
         self.showFullScreen()
 
     def uusi_peli_painettu(self):
-        pelaajienlisaysikkuna = Pelaajienlisaysikkuna()
-        pelaajienlisaysikkuna.show()
+        self.pelaajienlisaysikkuna = Pelaajienlisaysikkuna()
+        self.pelaajienlisaysikkuna.show()
         self.close()
 
     def keyPressEvent(self, event):
@@ -90,8 +90,8 @@ class Pelaajienlisaysikkuna(QMainWindow):
             self.pelaajalista.addItem(pelaaja.hanki_nimi())
 
     def aloita_peli(self):
-        peli_ikkuna = PeliIkkuna()
-        peli_ikkuna.show()
+        self.peli_ikkuna = PeliIkkuna()
+        self.peli_ikkuna.show()
         self.close()
 
     def keyPressEvent(self, event):

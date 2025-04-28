@@ -1,10 +1,9 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QVBoxLayout
-from gui import GUI
+from PyQt6.QtWidgets import QApplication
+from gui import Aloitusikkuna
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    gui = GUI()
+    gui = Aloitusikkuna()
     sys.exit(app.exec())
-

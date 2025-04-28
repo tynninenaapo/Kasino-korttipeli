@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 from peli import Peli
 from pelaaja import Pelaaja
 from kortti import Kortti
@@ -64,12 +65,23 @@ class Pelaajienlisaysikkuna(QMainWindow):
         self.aloita_peli_nappi.setFixedSize(600, 200)
         self.aloita_peli_nappi.clicked.connect(self.aloita_peli)
 
+        self.palaa_nappi = QPushButton("Takaisin päävalikkoon")
+        self.palaa_nappi.setFixedSize(300, 100)
+        self.palaa_nappi.clicked.connect(self.palaa)
+
         self.tekstikentta = QLabel("Lisätyt pelaajat:")
+        fontti = QFont()
+        fontti.setPointSize(17)
+        self.tekstikentta.setFont(fontti)
+
 
         self.pelaajalista = QListWidget()
+        self.pelaajalista.setFont(fontti)
 
         self.nappi_layout.addWidget(self.lisaa_pelaaja_nappi)
         self.nappi_layout.addWidget(self.aloita_peli_nappi)
+        self.nappi_layout.addStretch()
+        self.nappi_layout.addWidget(self.palaa_nappi)
 
         self.paa_layout.addLayout(self.nappi_layout)
 
@@ -92,6 +104,11 @@ class Pelaajienlisaysikkuna(QMainWindow):
     def aloita_peli(self):
         self.peli_ikkuna = PeliIkkuna()
         self.peli_ikkuna.show()
+        self.close()
+
+    def palaa(self):
+        self.aloitus_ikkuna = Aloitusikkuna()
+        self.aloitus_ikkuna.show()
         self.close()
 
     def keyPressEvent(self, event):

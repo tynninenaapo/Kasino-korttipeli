@@ -303,9 +303,13 @@ class Peli:
             for kortti in valitut_kortit:
                 self.poyta.poista_kortti_poydasta(kortti)
                 pelaaja.lisaa_kortti_pinoon(kortti)
-        if len(self.poyta.poydan_kortit) == 0:
-            pelaaja.mokit += 1
-        self.nosta_kortti(pelaaja)
+            if len(self.poyta.poydan_kortit) == 0:
+                pelaaja.mokit += 1
+            self.nosta_kortti(pelaaja)
+            return True
+        else:
+            return False
+
 
     # Pelaaja laittaa kortin pöytään
     def laita_kortti_poytaan(self, pelaaja, kortti):

@@ -151,8 +151,16 @@ class PeliIkkuna(QMainWindow):
         self.poyta_layout.addLayout(self.poyta_kortit_layout)
 
         self.pelaaja_layout = QVBoxLayout()
+        self.pelaaja_teksti_nappi_layout = QHBoxLayout()
+        self.pelaaja_layout.addLayout(self.pelaaja_teksti_nappi_layout)
+
         self.pelaaja_tekstikentta = QLabel()
-        self.pelaaja_layout.addWidget(self.pelaaja_tekstikentta)
+        self.pelaaja_teksti_nappi_layout.addWidget(self.pelaaja_tekstikentta)
+
+        self.valmis_nappi = QPushButton("Valmis")
+        self.valmis_nappi.setFixedSize(100, 20)
+        self.valmis_nappi.clicked.connect(self.valmis_painettu)
+        self.pelaaja_teksti_nappi_layout.addWidget(self.valmis_nappi)
 
         self.pelaaja_kortti_layout = QHBoxLayout()
         self.pelaaja_layout.addLayout(self.pelaaja_kortti_layout)
@@ -200,7 +208,6 @@ class PeliIkkuna(QMainWindow):
             nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
             self.pelaaja_kortti_layout.addWidget(nappi)
         self.pelaaja_tekstikentta.setText(f"Omat kortit (Pelaaja \"{self.peli.pelaajat[self.indeksi].hanki_nimi()}\")")
-        self.indeksi += 1
 
     def poydan_kortti_painettu(self, painettu, kortti):
         if painettu:
@@ -213,6 +220,25 @@ class PeliIkkuna(QMainWindow):
             self.pelattu_kortti = kortti
         else:
             self.pelattu_kortti = None
+
+    def valmis_painettu(self):
+        if self.pelattu_kortti and len(self.valitut_kortit) > 0:
+            if self.peli.pelaa_kortti(self.peli.pelaajat[self.indeksi], self.pelattu_kortti, self.valitut_kortit):
+                self.paivita_poydan_kortit()
+                self.paivita_pelaajan_kortit()
+            else:
+                virheviesti = QErrorMessage(self)
+                virheviesti.setWindowTitle("Virhe")
+                virheviesti.showMessage("Valitsemasi kortit eivät ole sääntöjen mukaiset!")
+        elif self.pelattu_kortti and len(self.valitut_kortit) == 0:
+            self.peli.laita_kortti_poytaan(self.peli.pelaajat[self.indeksi], self.pelattu_kortti)
+            self.paivita_poydan_kortit()
+            self.paivita_pelaajan_kortit()
+        else:
+            virheviesti = QErrorMessage(self)
+            virheviesti.setWindowTitle("Virhe")
+            virheviesti.showMessage("Sinun tulee valita ainakin yksi pelattava kortti!")
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:

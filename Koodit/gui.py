@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
+from PyQt6.QtWidgets import QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from peli import Peli
@@ -102,9 +102,14 @@ class Pelaajienlisaysikkuna(QMainWindow):
             self.pelaajalista.addItem(pelaaja.hanki_nimi())
 
     def aloita_peli(self):
-        self.peli_ikkuna = PeliIkkuna()
-        self.peli_ikkuna.show()
-        self.close()
+        if len(self.peli.pelaajat) < 2:
+            virheviesti = QErrorMessage(self)
+            virheviesti.setWindowTitle("Virhe")
+            virheviesti.showMessage("Pelaajia tulee lisätä vähintään 2!")
+        else:
+            self.peli_ikkuna = PeliIkkuna(self.peli)
+            self.peli_ikkuna.show()
+            self.close()
 
     def palaa(self):
         self.aloitus_ikkuna = Aloitusikkuna()
@@ -118,5 +123,73 @@ class Pelaajienlisaysikkuna(QMainWindow):
 
 class PeliIkkuna(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, peli):
         super().__init__()
+        self.setWindowTitle("Kasino")
+
+        self.peli = peli
+
+        self.index = 0
+
+        self.peli.luo_pakka()
+        self.peli.jaa_kortit()
+
+        self.paa_widget = QWidget()
+
+        self.paa_layout = QVBoxLayout()
+
+        self.poyta_layout = QVBoxLayout()
+        self.poyta_tesktikentta = QLabel("Pöydän kortit")
+        self.poyta_layout.addWidget(self.poyta_tesktikentta)
+
+        self.poyta_kortit_layout = QGridLayout()
+        self.poyta_layout.addLayout(self.poyta_kortit_layout)
+
+        self.pelaaja_layout = QVBoxLayout()
+        self.pelaaja_tekstikentta = QLabel("Omat kortit")
+        self.pelaaja_layout.addWidget(self.pelaaja_tekstikentta)
+
+        self.pelaaja_kortti_layout = QHBoxLayout()
+        self.pelaaja_layout.addLayout(self.pelaaja_kortti_layout)
+
+        self.paa_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.paivita_poydan_kortit()
+        self.paivita_pelaajan_kortit()
+
+        self.paa_layout.addStretch(50)
+        self.paa_layout.addLayout(self.poyta_layout)
+        self.paa_layout.addStretch()
+        self.paa_layout.addLayout(self.pelaaja_layout)
+
+        self.setCentralWidget(self.paa_widget)
+        self.paa_widget.setLayout(self.paa_layout)
+
+        self.showFullScreen()
+
+    def paivita_poydan_kortit(self):
+        napit = []
+        x = 1
+        y = 1
+        for kortti in self.peli.poyta.poydan_kortit:
+            nappi = QPushButton(f"{kortti.__str__()}")
+            nappi.setFixedSize(100, 160)
+            napit.append(nappi)
+            if x == 1:
+                self.poyta_kortit_layout.addWidget(nappi, x, y)
+                x += 1
+            if x == 2:
+                self.poyta_kortit_layout.addWidget(nappi, x, y)
+                x = 1
+                y += 1
+
+    def paivita_pelaajan_kortit(self):
+        for kortti in self.peli.pelaajat[self.index].hanki_kasi():
+            nappi = QPushButton(f"{kortti.__str__()}")
+            nappi.setFixedSize(100, 160)
+            self.pelaaja_kortti_layout.addWidget(nappi)
+        self.index += 1
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Escape:
+            self.close()

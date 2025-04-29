@@ -1,9 +1,10 @@
-from PyQt6.QtWidgets import QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
+from PyQt6.QtWidgets import QButtonGroup, QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from peli import Peli
 from pelaaja import Pelaaja
 from kortti import Kortti
+import time
 
 
 class Aloitusikkuna(QMainWindow):
@@ -129,7 +130,11 @@ class PeliIkkuna(QMainWindow):
 
         self.peli = peli
 
-        self.index = 0
+        self.indeksi = 0
+
+        self.valitut_kortit = []
+
+        self.pelattu_kortti = None
 
         self.peli.luo_pakka()
         self.peli.jaa_kortit()
@@ -146,11 +151,14 @@ class PeliIkkuna(QMainWindow):
         self.poyta_layout.addLayout(self.poyta_kortit_layout)
 
         self.pelaaja_layout = QVBoxLayout()
-        self.pelaaja_tekstikentta = QLabel("Omat kortit")
+        self.pelaaja_tekstikentta = QLabel()
         self.pelaaja_layout.addWidget(self.pelaaja_tekstikentta)
 
         self.pelaaja_kortti_layout = QHBoxLayout()
         self.pelaaja_layout.addLayout(self.pelaaja_kortti_layout)
+
+        self.pelaaja_kortti_nappiryhma = QButtonGroup()
+        self.pelaaja_kortti_nappiryhma.setExclusive(True)
 
         self.paa_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -168,27 +176,43 @@ class PeliIkkuna(QMainWindow):
         self.showFullScreen()
 
     def paivita_poydan_kortit(self):
-        napit = []
-        x = 1
-        y = 1
+        x = 0
+        y = 0
         for kortti in self.peli.poyta.poydan_kortit:
             nappi = QPushButton(f"{kortti.__str__()}")
             nappi.setFixedSize(100, 160)
-            napit.append(nappi)
-            if x == 1:
+            nappi.setCheckable(True)
+            nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
+            if x == 0:
                 self.poyta_kortit_layout.addWidget(nappi, x, y)
                 x += 1
-            if x == 2:
+            if x == 1:
                 self.poyta_kortit_layout.addWidget(nappi, x, y)
-                x = 1
+                x = 0
                 y += 1
 
     def paivita_pelaajan_kortit(self):
-        for kortti in self.peli.pelaajat[self.index].hanki_kasi():
+        for kortti in self.peli.pelaajat[self.indeksi].hanki_kasi():
             nappi = QPushButton(f"{kortti.__str__()}")
             nappi.setFixedSize(100, 160)
+            nappi.setCheckable(True)
+            self.pelaaja_kortti_nappiryhma.addButton(nappi)
+            nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
             self.pelaaja_kortti_layout.addWidget(nappi)
-        self.index += 1
+        self.pelaaja_tekstikentta.setText(f"Omat kortit (Pelaaja \"{self.peli.pelaajat[self.indeksi].hanki_nimi()}\")")
+        self.indeksi += 1
+
+    def poydan_kortti_painettu(self, painettu, kortti):
+        if painettu:
+            self.valitut_kortit.append(kortti)
+        else:
+            self.valitut_kortit.remove(kortti)
+
+    def pelaajan_kortti_painettu(self, painettu, kortti):
+        if painettu:
+            self.pelattu_kortti = kortti
+        else:
+            self.pelattu_kortti = None
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:

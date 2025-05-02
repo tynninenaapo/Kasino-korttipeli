@@ -277,6 +277,7 @@ class Peli:
                     if kortti.hanki_arvo_poydassa() == 2:
                         pelaaja.pisteet += 1
                 if kortti.hanki_arvo_poydassa() == 1:
+                    pelaaja.assat_pinossa += 1
                     pelaaja.pisteet += 1
                 if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
                     if len(pelaaja.pino) == len(eniten_kortteja.pino) and not pelaaja == eniten_kortteja:

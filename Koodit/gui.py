@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMessageBox, QButtonGroup, QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
+from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QButtonGroup, QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont
 from peli import Peli
@@ -157,6 +157,9 @@ class PeliIkkuna(QMainWindow):
             self.peli.luo_pakka()
             self.peli.jaa_kortit()
 
+        self.pelaajan_vuoro = self.peli.pelaajat[self.indeksi]
+        self.viimeisin_nostaja = None
+
         self.paa_widget = QWidget()
 
         self.paa_layout = QVBoxLayout()
@@ -214,7 +217,7 @@ class PeliIkkuna(QMainWindow):
             self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
 
     def paivita_pelaajan_kortit(self):
-        for kortti in self.peli.pelaajat[self.indeksi].hanki_kasi():
+        for kortti in self.pelaajan_vuoro.hanki_kasi():
             nappi = KorttiNappi(kortti)
             nappi.setText(f"{kortti.__str__()}")
             nappi.setFixedSize(100, 160)
@@ -223,7 +226,7 @@ class PeliIkkuna(QMainWindow):
             self.pelaaja_kortti_nappiryhma.addButton(nappi)
             nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
             self.pelaaja_kortti_layout.addWidget(nappi)
-        self.pelaaja_tekstikentta.setText(f"Omat kortit (Pelaaja \"{self.peli.pelaajat[self.indeksi].hanki_nimi()}\")")
+        self.pelaaja_tekstikentta.setText(f"Omat kortit (Pelaaja \"{self.pelaajan_vuoro.hanki_nimi()}\")")
 
     def poydan_kortti_painettu(self, painettu, kortti):
         if painettu:
@@ -238,14 +241,17 @@ class PeliIkkuna(QMainWindow):
             self.pelattu_kortti = None
 
     def valmis_painettu(self):
+        if len(self.pelaajan_vuoro.hanki_kasi()) == 0:
+            self.vuoronvaihto()
         if self.pelattu_kortti and len(self.valitut_kortit) > 0:
-            totuusarvo, nostettu_kortti = self.peli.pelaa_kortti(self.peli.pelaajat[self.indeksi], self.pelattu_kortti, self.valitut_kortit)
+            totuusarvo, nostettu_kortti = self.peli.pelaa_kortti(self.pelaajan_vuoro, self.pelattu_kortti, self.valitut_kortit)
             if totuusarvo:
                 self.poista_korttinappi_pelaajalta(self.pelattu_kortti)
                 self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
                 for kortti in self.valitut_kortit:
                     self.poista_korttinappi_poydasta(kortti)
                 self.pelattu_kortti = None
+                self.viimeisin_nostaja = self.pelaajan_vuoro
                 self.vuoronvaihto()
             else:
                 virheviesti = QErrorMessage(self)
@@ -253,7 +259,7 @@ class PeliIkkuna(QMainWindow):
                 virheviesti.showMessage("Valitsemasi kortit eivät ole sääntöjen mukaiset!")
         elif self.pelattu_kortti and len(self.valitut_kortit) == 0:
             self.poista_korttinappi_pelaajalta(self.pelattu_kortti)
-            nostettu_kortti = self.peli.laita_kortti_poytaan(self.peli.pelaajat[self.indeksi], self.pelattu_kortti)
+            nostettu_kortti = self.peli.laita_kortti_poytaan(self.pelaajan_vuoro, self.pelattu_kortti)
             self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
             self.lisaa_korttinappi_poytaan(self.pelattu_kortti)
             self.pelattu_kortti = None
@@ -305,19 +311,88 @@ class PeliIkkuna(QMainWindow):
         self.pelaajan_korttinapit = []
 
     def vuoronvaihto(self):
-        self.valmis_nappi.setEnabled(False)
-        if self.indeksi == len(self.peli.pelaajat) - 1:
-            self.indeksi = 0
+        nolla_korttia = 0
+        for pelaaja in self.peli.pelaajat:
+            if len(pelaaja.hanki_kasi()) == 0:
+                nolla_korttia += 1
+            else:
+                break
+        if nolla_korttia == len(self.peli.pelaajat):
+            self.kierros_paattyy()
         else:
-            self.indeksi += 1
-        self.poista_kaikki_pelaajan_korttinapit()
-        self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.peli.pelaajat[self.indeksi].hanki_nimi()} (10 sekuntia)...")
-        self.paivita_pelaajan_kortit()
-        self.valmis_nappi.setEnabled(True)
+            self.valmis_nappi.setEnabled(False)
+            if self.indeksi == len(self.peli.pelaajat) - 1:
+                self.indeksi = 0
+            else:
+                self.indeksi += 1
+            self.pelaajan_vuoro = self.peli.pelaajat[self.indeksi]
+            self.poista_kaikki_pelaajan_korttinapit()
+            self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.pelaajan_vuoro.hanki_nimi()} (10 sekuntia)...")
+            self.paivita_pelaajan_kortit()
+            self.valmis_nappi.setEnabled(True)
+
+
+    def kierros_paattyy(self):
+        pass
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
             self.close()
+
+class KierrosPaattyyIkkuna(QWidget):
+
+    def __init__(self, peli):
+        super().__init__()
+
+        self.peli = peli
+
+        self.lopetusikkuna = QWidget()
+        self.lopetusikkuna.setWindowTitle("Kierros päättyi!")
+
+        self.paalayout = QVBoxLayout()
+
+        self.tekstikentta = QLabel("Tulokset:")
+        self.paalayout.addWidget(self.tekstikentta)
+
+        self.taulukko = QTableWidget(8, len(self.peli.pelaajat) + 1)
+        self.paalayout.addWidget(self.taulukko)
+
+        self.nappi_layout = QHBoxLayout()
+
+        self.lopeta_peli_nappi = QPushButton("Lopeta peli")
+        self.jatka_pelia_nappi = QPushButton("Jatka peliä")
+
+        self.nappi_layout.addWidget(self.lopeta_peli_nappi)
+        self.nappi_layout.addWidget(self.jatka_pelia_nappi)
+        self.paalayout.addLayout(self.nappi_layout)
+
+    def tayta_taulukko(self):
+        self.peli.laske_pisteet()
+        self.taulukko.setItem(0, 0, QTableWidgetItem("Pelaajan nimi"))
+        self.taulukko.setItem(1, 0, QTableWidgetItem("Korttien määrä"))
+        self.taulukko.setItem(2, 0, QTableWidgetItem("Patojen määrä"))
+        self.taulukko.setItem(3, 0, QTableWidgetItem("Mökit"))
+        self.taulukko.setItem(4, 0, QTableWidgetItem("Ässät"))
+        self.taulukko.setItem(5, 0, QTableWidgetItem("Ruutu-10"))
+        self.taulukko.setItem(6, 0, QTableWidgetItem("Pata-2"))
+        self.taulukko.setItem(7, 0, QTableWidgetItem("Pisteet"))
+        for i, pelaaja in enumerate(self.peli.pelaajat):
+            self.taulukko.setItem(0, i, QTableWidgetItem(pelaaja.hanki_nimi()))
+            self.taulukko.setItem(1, i, QTableWidgetItem(len(pelaaja.hanki_pino())))
+            self.taulukko.setItem(2, i, QTableWidgetItem(pelaaja.padat_pinossa))
+            self.taulukko.setItem(3, i, QTableWidgetItem(pelaaja.hanki_mokit()))
+            self.taulukko.setItem(4, i, QTableWidgetItem(pelaaja.assat_pinossa))
+            for kortti in pelaaja.hanki_pino():
+                if kortti.__str__() == "Ruutu-10":
+                    self.taulukko.setItem(5, i, QTableWidgetItem("X"))
+                else:
+                    self.taulukko.setItem(5, i, QTableWidgetItem("O"))
+                if kortti.__str__() == "Pata-2":
+                    self.taulukko.setItem(6, i, QTableWidgetItem("X"))
+                else:
+                    self.taulukko.setItem(6, i, QTableWidgetItem("O"))
+            self.taulukko.setItem(7, i, pelaaja.hanki_pisteet())
+
 
 
 class KorttiNappi(QPushButton):

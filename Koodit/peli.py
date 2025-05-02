@@ -26,8 +26,10 @@ class Peli:
                 self.poyta.lisaa_kortti_pakkaan(kortti)
 
     # Kirjoittaa pelitilanteen tiedostoon "pelitilanne.txt"
-    def kirjoita_pelitilanne(self):
+    def kirjoita_pelitilanne(self, indeksi):
         tiedosto = open("pelitilanne.txt", "w")
+        indeksi = f"{indeksi}"
+        tiedosto.write(indeksi)
         for pelaaja in self.pelaajat:
             str = ""
             if len(pelaaja.hanki_nimi()) < 10:
@@ -75,6 +77,7 @@ class Peli:
     def lue_pelitilanne(self):
         tiedosto = open("pelitilanne.txt", "r")
         kortit = ""
+        indeksi = tiedosto.read(1)
         for rivi in tiedosto:
             i = 0
             rivi = rivi.rstrip()
@@ -206,6 +209,7 @@ class Peli:
             pituus = int(kortit[i:i + 2])
             i += 2
         tiedosto.close()
+        return indeksi
 
     # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
     def jaa_kortit(self):

@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QButtonGroup, QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMessageBox, QButtonGroup, QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont
 from peli import Peli
 from pelaaja import Pelaaja
@@ -28,6 +28,7 @@ class Aloitusikkuna(QMainWindow):
         self.layout.addWidget(self.jatka_pelia_nappi)
 
         self.uusi_peli_nappi.clicked.connect(self.uusi_peli_painettu)
+        self.jatka_pelia_nappi.clicked.connect(self.jatka_pelia_painettu)
 
         self.setCentralWidget(self.paa_widget)
         self.paa_widget.setLayout(self.layout)
@@ -39,9 +40,19 @@ class Aloitusikkuna(QMainWindow):
         self.pelaajienlisaysikkuna.show()
         self.close()
 
+    def jatka_pelia_painettu(self):
+        peli = Peli()
+        indeksi = peli.lue_pelitilanne()
+        self.peli_ikkuna = PeliIkkuna(peli, indeksi, False)
+        self.peli_ikkuna.show()
+        self.close()
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
-            self.close()
+            vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti poistua pelistä?",
+                                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if vastaus == QMessageBox.StandardButton.Yes:
+                self.close()
 
 
 class Pelaajienlisaysikkuna(QMainWindow):
@@ -119,25 +130,29 @@ class Pelaajienlisaysikkuna(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
-            self.close()
+            vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti poistua pelistä?",
+                                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if vastaus == QMessageBox.StandardButton.Yes:
+                self.close()
 
 
 class PeliIkkuna(QMainWindow):
 
-    def __init__(self, peli):
+    def __init__(self, peli, indeksi=0, uusi_peli=True):
         super().__init__()
         self.setWindowTitle("Kasino")
 
         self.peli = peli
 
-        self.indeksi = 0
+        self.indeksi = indeksi
 
         self.valitut_kortit = []
 
         self.pelattu_kortti = None
 
-        self.pelaajan_korttinapit = []
-        self.poydan_korttinapit = []
+        if uusi_peli:
+            self.pelaajan_korttinapit = []
+            self.poydan_korttinapit = []
 
         self.peli.luo_pakka()
         self.peli.jaa_kortit()
@@ -233,6 +248,7 @@ class PeliIkkuna(QMainWindow):
                 for kortti in self.valitut_kortit:
                     self.poista_korttinappi_poydasta(kortti)
                 self.pelattu_kortti = None
+                self.vuoronvaihto()
             else:
                 virheviesti = QErrorMessage(self)
                 virheviesti.setWindowTitle("Virhe")
@@ -243,6 +259,7 @@ class PeliIkkuna(QMainWindow):
             self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
             self.lisaa_korttinappi_poytaan(self.pelattu_kortti)
             self.pelattu_kortti = None
+            self.vuoronvaihto()
         else:
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
@@ -283,6 +300,22 @@ class PeliIkkuna(QMainWindow):
                 nappi.deleteLater()
                 self.pelaajan_korttinapit.remove(nappi)
 
+    def poista_kaikki_pelaajan_korttinapit(self):
+        for nappi in self.pelaajan_korttinapit:
+            nappi.setParent(None)
+            nappi.deleteLater()
+        self.pelaajan_korttinapit = []
+
+    def vuoronvaihto(self):
+        self.valmis_nappi.setEnabled(False)
+        if self.indeksi == len(self.peli.pelaajat) - 1:
+            self.indeksi = 0
+        else:
+            self.indeksi += 1
+        self.poista_kaikki_pelaajan_korttinapit()
+        self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.peli.pelaajat[self.indeksi].hanki_nimi()} (10 sekuntia)...")
+        self.paivita_pelaajan_kortit()
+        self.valmis_nappi.setEnabled(True)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:

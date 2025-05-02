@@ -53,7 +53,7 @@ class Testi(unittest.TestCase):
         self.assertEqual(len(pelaaja2.hanki_kasi()), 4)
         self.assertEqual(len(peli.poyta.poydan_kortit), 4)
 
-        peli.kirjoita_pelitilanne()
+        peli.kirjoita_pelitilanne(0)
 
     def testaa_lukua(self):
         peli = Peli()

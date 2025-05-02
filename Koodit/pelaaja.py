@@ -21,7 +21,7 @@ class Pelaaja:
 
     # Poistaa kortin pelaajan kädestä
     def poista_kortti_kadesta(self, kortti):
-        self.pino.remove(kortti)
+        self.kasi.remove(kortti)
 
     def hanki_nimi(self):
         return self.nimi

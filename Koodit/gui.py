@@ -228,7 +228,11 @@ class PeliIkkuna(QMainWindow):
         if self.pelattu_kortti and len(self.valitut_kortit) > 0:
             totuusarvo, nostettu_kortti = self.peli.pelaa_kortti(self.peli.pelaajat[self.indeksi], self.pelattu_kortti, self.valitut_kortit)
             if totuusarvo:
-                pass
+                self.poista_korttinappi_pelaajalta(self.pelattu_kortti)
+                self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
+                for kortti in self.valitut_kortit:
+                    self.poista_korttinappi_poydasta(kortti)
+                self.pelattu_kortti = None
             else:
                 virheviesti = QErrorMessage(self)
                 virheviesti.setWindowTitle("Virhe")
@@ -255,11 +259,12 @@ class PeliIkkuna(QMainWindow):
         sarake = (len(self.poydan_korttinapit) - 1) % 6
         self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
 
-    '''def poista_korttinappi_poydasta(self, kortti):
+    def poista_korttinappi_poydasta(self, kortti):
         for nappi in self.poydan_korttinapit:
             if nappi.hanki_kortti() == kortti:
                 nappi.setParent(None)
-                nappi.deleteLater()'''
+                nappi.deleteLater()
+                self.poydan_korttinapit.remove(nappi)
 
     def lisaa_korttinappi_pelaajalle(self, kortti):
         nappi = KorttiNappi(kortti)

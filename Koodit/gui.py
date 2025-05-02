@@ -136,6 +136,9 @@ class PeliIkkuna(QMainWindow):
 
         self.pelattu_kortti = None
 
+        self.pelaajan_korttinapit = []
+        self.poydan_korttinapit = []
+
         self.peli.luo_pakka()
         self.peli.jaa_kortit()
 
@@ -173,9 +176,9 @@ class PeliIkkuna(QMainWindow):
         self.paivita_poydan_kortit()
         self.paivita_pelaajan_kortit()
 
-        self.paa_layout.addStretch(50)
+        self.paa_layout.addStretch(10)
         self.paa_layout.addLayout(self.poyta_layout)
-        self.paa_layout.addStretch()
+        self.paa_layout.addStretch(10)
         self.paa_layout.addLayout(self.pelaaja_layout)
 
         self.setCentralWidget(self.paa_widget)
@@ -184,26 +187,26 @@ class PeliIkkuna(QMainWindow):
         self.showFullScreen()
 
     def paivita_poydan_kortit(self):
-        x = 0
-        y = 0
-        for kortti in self.peli.poyta.poydan_kortit:
-            nappi = QPushButton(f"{kortti.__str__()}")
+        for i, kortti in enumerate(self.peli.poyta.poydan_kortit):
+            nappi = KorttiNappi(kortti)
+            nappi.setText(f"{kortti.__str__()}")
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
+            self.poydan_korttinapit.append(nappi)
             nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
-            if x == 0:
-                self.poyta_kortit_layout.addWidget(nappi, x, y)
-                x += 1
-            if x == 1:
-                self.poyta_kortit_layout.addWidget(nappi, x, y)
-                x = 0
-                y += 1
+            rivi = i // 6
+            sarake = i % 6
+            self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
+
+
 
     def paivita_pelaajan_kortit(self):
         for kortti in self.peli.pelaajat[self.indeksi].hanki_kasi():
-            nappi = QPushButton(f"{kortti.__str__()}")
+            nappi = KorttiNappi(kortti)
+            nappi.setText(f"{kortti.__str__()}")
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
+            self.pelaajan_korttinapit.append(nappi)
             self.pelaaja_kortti_nappiryhma.addButton(nappi)
             nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
             self.pelaaja_kortti_layout.addWidget(nappi)
@@ -223,23 +226,69 @@ class PeliIkkuna(QMainWindow):
 
     def valmis_painettu(self):
         if self.pelattu_kortti and len(self.valitut_kortit) > 0:
-            if self.peli.pelaa_kortti(self.peli.pelaajat[self.indeksi], self.pelattu_kortti, self.valitut_kortit):
-                self.paivita_poydan_kortit()
-                self.paivita_pelaajan_kortit()
+            totuusarvo, nostettu_kortti = self.peli.pelaa_kortti(self.peli.pelaajat[self.indeksi], self.pelattu_kortti, self.valitut_kortit)
+            if totuusarvo:
+                pass
             else:
                 virheviesti = QErrorMessage(self)
                 virheviesti.setWindowTitle("Virhe")
                 virheviesti.showMessage("Valitsemasi kortit eivät ole sääntöjen mukaiset!")
         elif self.pelattu_kortti and len(self.valitut_kortit) == 0:
-            self.peli.laita_kortti_poytaan(self.peli.pelaajat[self.indeksi], self.pelattu_kortti)
-            self.paivita_poydan_kortit()
-            self.paivita_pelaajan_kortit()
+            self.poista_korttinappi_pelaajalta(self.pelattu_kortti)
+            nostettu_kortti = self.peli.laita_kortti_poytaan(self.peli.pelaajat[self.indeksi], self.pelattu_kortti)
+            self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
+            self.lisaa_korttinappi_poytaan(self.pelattu_kortti)
+            self.pelattu_kortti = None
         else:
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Sinun tulee valita ainakin yksi pelattava kortti!")
 
+    def lisaa_korttinappi_poytaan(self, kortti):
+        nappi = KorttiNappi(kortti)
+        nappi.setText(f"{kortti.__str__()}")
+        nappi.setFixedSize(100, 160)
+        nappi.setCheckable(True)
+        self.poydan_korttinapit.append(nappi)
+        nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
+        rivi = (len(self.poydan_korttinapit) - 1) // 6
+        sarake = (len(self.poydan_korttinapit) - 1) % 6
+        self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
+
+    '''def poista_korttinappi_poydasta(self, kortti):
+        for nappi in self.poydan_korttinapit:
+            if nappi.hanki_kortti() == kortti:
+                nappi.setParent(None)
+                nappi.deleteLater()'''
+
+    def lisaa_korttinappi_pelaajalle(self, kortti):
+        nappi = KorttiNappi(kortti)
+        nappi.setText(f"{kortti.__str__()}")
+        nappi.setFixedSize(100, 160)
+        nappi.setCheckable(True)
+        self.pelaajan_korttinapit.append(nappi)
+        self.pelaaja_kortti_nappiryhma.addButton(nappi)
+        nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
+        self.pelaaja_kortti_layout.addWidget(nappi)
+
+    def poista_korttinappi_pelaajalta(self, kortti):
+        for nappi in self.pelaajan_korttinapit:
+            if nappi.hanki_kortti() == kortti:
+                nappi.setParent(None)
+                nappi.deleteLater()
+                self.pelaajan_korttinapit.remove(nappi)
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
             self.close()
+
+
+class KorttiNappi(QPushButton):
+
+    def __init__(self, kortti):
+        super().__init__()
+        self.kortti = kortti
+
+    def hanki_kortti(self):
+        return self.kortti

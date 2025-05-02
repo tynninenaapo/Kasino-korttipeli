@@ -150,12 +150,12 @@ class PeliIkkuna(QMainWindow):
 
         self.pelattu_kortti = None
 
-        if uusi_peli:
-            self.pelaajan_korttinapit = []
-            self.poydan_korttinapit = []
+        self.pelaajan_korttinapit = []
+        self.poydan_korttinapit = []
 
-        self.peli.luo_pakka()
-        self.peli.jaa_kortit()
+        if uusi_peli:
+            self.peli.luo_pakka()
+            self.peli.jaa_kortit()
 
         self.paa_widget = QWidget()
 
@@ -212,8 +212,6 @@ class PeliIkkuna(QMainWindow):
             rivi = i // 6
             sarake = i % 6
             self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
-
-
 
     def paivita_pelaajan_kortit(self):
         for kortti in self.peli.pelaajat[self.indeksi].hanki_kasi():

@@ -332,6 +332,18 @@ class Peli:
             return satunnainen_kortti
         return None
 
+    # Nollaa pelaajien tilastot uutta kierrosta varten
+    def uusi_kierros(self):
+        for pelaaja in self.pelaajat:
+            pelaaja.kasi = []
+            pelaaja.pino = []
+            pelaaja.padat_pinossa = 0
+            pelaaja.assat_pinossa = 0
+            pelaaja.mokit = 0
+        self.poyta.poydan_kortit = []
+        self.poyta.pakka = []
+
+
     # Parametrina lista kortteja
     # Summaa korttien arvot pöydässä yhteen
     def summaa_kortit_poydassa(self, kortit):

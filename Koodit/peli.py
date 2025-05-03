@@ -272,7 +272,9 @@ class Peli:
     # Vertailee pelaajien korttipinoja ja antaa pisteitä sääntöjen mukaisesti
     def laske_pisteet(self):
         eniten_kortteja = self.pelaajat[0]
+        eniten_kortteja_lista = []
         eniten_patoja = self.pelaajat[0]
+        eniten_patoja_lista = []
         for pelaaja in self.pelaajat:
             pelaaja.pisteet += pelaaja.hanki_mokit()
             pelaaja.mokit = 0
@@ -288,24 +290,32 @@ class Peli:
                     pelaaja.pisteet += 1
                 if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
                     if len(pelaaja.pino) == len(eniten_kortteja.pino) and not pelaaja == eniten_kortteja:
-                        eniten_kortteja = pelaaja, eniten_kortteja
+                        eniten_kortteja_lista.append(pelaaja)
+                        eniten_kortteja_lista.append(eniten_kortteja)
                     else:
                         eniten_kortteja = pelaaja
                 if pelaaja.padat_pinossa >= eniten_patoja.padat_pinossa:
                     if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa and not pelaaja == eniten_patoja:
-                        eniten_patoja = pelaaja, eniten_patoja
+                        eniten_patoja_lista.append(pelaaja)
+                        eniten_patoja_lista.append(eniten_patoja)
                     else:
                         eniten_patoja = pelaaja
-        if type(eniten_kortteja) != tuple:
+        if len(eniten_kortteja_lista) == 0:
             eniten_kortteja.pisteet += 1
         else:
-            for pelaaja in eniten_kortteja:
-                pelaaja.pisteet += 1
-        if type(eniten_patoja) != tuple:
+            if len(eniten_kortteja.hanki_pino()) > eniten_kortteja_lista[0].hanki_pino():
+                eniten_kortteja.pisteet += 1
+            else:
+                for pelaaja in eniten_kortteja_lista:
+                    pelaaja.pisteet += 1
+        if len(eniten_patoja_lista) == 0:
             eniten_patoja.pisteet += 2
         else:
-            for pelaaja in eniten_patoja:
-                pelaaja.pisteet += 2
+            if len(eniten_kortteja.padat_pinossa) > eniten_kortteja_lista[0].padat_pinossa:
+                eniten_kortteja.pisteet += 2
+            else:
+                for pelaaja in eniten_patoja_lista:
+                    pelaaja.pisteet += 2
 
     # Pelaaja pelaa kortin
     def pelaa_kortti(self, pelaaja, pelattu_kortti, valitut_kortit):

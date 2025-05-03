@@ -370,12 +370,14 @@ class KierrosPaattyyIkkuna(QWidget):
             Qt.WindowType.Window | Qt.WindowType.WindowTitleHint | Qt.WindowType.CustomizeWindowHint)
 
         self.setWindowTitle("Kierros päättyi!")
-        self.setFixedSize((len(self.peli.pelaajat) + 1) * 110, 330)
+        self.setFixedSize((len(self.peli.pelaajat) + 1) * 110, 360)
 
         self.paalayout = QVBoxLayout()
 
         self.tekstikentta = QLabel("Tulokset:")
         self.paalayout.addWidget(self.tekstikentta)
+        self.voittaja_tekstikentta = QLabel()
+        self.paalayout.addWidget(self.voittaja_tekstikentta)
 
         self.taulukko = QTableWidget(8, len(self.peli.pelaajat) + 1)
         self.paalayout.addWidget(self.taulukko)
@@ -398,6 +400,7 @@ class KierrosPaattyyIkkuna(QWidget):
 
 
     def tayta_taulukko(self):
+        kuusitoista_pistetta = []
         self.taulukko.verticalHeader().setVisible(False)
         self.taulukko.horizontalHeader().setVisible(False)
         self.taulukko.setItem(0, 0, QTableWidgetItem("Pelaajan nimi"))
@@ -428,6 +431,39 @@ class KierrosPaattyyIkkuna(QWidget):
                 self.taulukko.setItem(5, i + 1, QTableWidgetItem("O"))
                 self.taulukko.setItem(6, i + 1, QTableWidgetItem("O"))
             self.taulukko.setItem(7, i + 1, QTableWidgetItem(str(pelaaja.hanki_pisteet())))
+            if pelaaja.hanki_pisteet() >= 16:
+                kuusitoista_pistetta.append(pelaaja)
+        if len(kuusitoista_pistetta) == 1:
+            self.jatka_pelia_nappi.setEnabled(False)
+            self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
+            self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
+            self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {kuusitoista_pistetta[0]}!")
+        elif len(kuusitoista_pistetta) > 1:
+            self.jatka_pelia_nappi.setEnabled(False)
+            self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
+            self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
+            voittaja = kuusitoista_pistetta[0]
+            voittajat = []
+            for pelaaja in kuusitoista_pistetta:
+                if pelaaja.hanki_pisteet() > voittaja.hanki_pisteet():
+                    voittaja = pelaaja
+                elif pelaaja.hanki_pisteet() == voittaja.hanki_pisteet():
+                    voittajat.append(pelaaja)
+                    voittaja.append(voittaja)
+            if len(voittajat) == 0:
+                self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja}!")
+            else:
+                if voittaja.hanki_pisteet() > voittajat[0].hanki_pisteet():
+                    self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja}!")
+                else:
+                    if len(voittajat) == 2:
+                        self.voittaja_tekstikentta.setText(f"Pelaajilla {voittajat[0]} ja {voittajat[1]} tuli tasapeli!")
+                    else:
+                        merkkijono = ""
+                        for pelaaja in range(len(voittajat) - 1):
+                            merkkijono += f"{pelaaja}, "
+                        merkkijono += f"ja {voittajat[len(voittajat) - 1]}"
+                        self.voittaja_tekstikentta.setText(f"Pelaajilla {merkkijono} tuli tasapeli!")
 
     def lopeta_peli_painettu(self):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
@@ -448,6 +484,17 @@ class KierrosPaattyyIkkuna(QWidget):
         self.uusi_peli_ikkuna.show()
         self.peli_ikkuna.close()
         self.close()
+
+    def peli_loppu(self):
+        vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti palata takaisin alkuvalikkoon?",
+                                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if vastaus == QMessageBox.StandardButton.Yes:
+            self.aloitusikkuna = Aloitusikkuna()
+            self.aloitusikkuna.show()
+            self.peli_ikkuna.close()
+            self.close()
+        if vastaus == QMessageBox.StandardButton.No:
+            pass
 
 class KorttiNappi(QPushButton):
 

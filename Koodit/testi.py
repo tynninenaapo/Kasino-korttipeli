@@ -81,6 +81,20 @@ class Testi(unittest.TestCase):
         self.assertEqual(len(peli.poyta.poydan_kortit), 5)
         self.assertEqual(len(pelaaja1.hanki_kasi()), 4)
 
+    def testaa_pisteenlaskua(self):
+        peli = Peli()
+
+        pelaaja1 = Pelaaja("pelaaja1")
+        peli.lisaa_pelaaja(pelaaja1)
+
+        pelaaja2 = Pelaaja("pelaaja2")
+        peli.lisaa_pelaaja(pelaaja2)
+
+        peli.luo_pakka()
+        peli.jaa_kortit()
+
+        peli.laske_pisteet()
+
 
 
 if __name__ == '__main__':

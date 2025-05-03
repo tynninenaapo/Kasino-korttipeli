@@ -205,16 +205,16 @@ class PeliIkkuna(QMainWindow):
         self.showFullScreen()
 
     def paivita_poydan_kortit(self):
-        for i, kortti in enumerate(self.peli.poyta.poydan_kortit):
+        for kortti in self.peli.poyta.poydan_kortit:
             nappi = KorttiNappi(kortti)
             nappi.setText(f"{kortti.__str__()}")
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
-            self.poydan_korttinapit.append(nappi)
             nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
-            rivi = i // 6
-            sarake = i % 6
+            rivi = len(self.poydan_korttinapit) // 6
+            sarake = len(self.poydan_korttinapit) % 6
             self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
+            self.poydan_korttinapit.append(nappi)
 
     def paivita_pelaajan_kortit(self):
         for kortti in self.pelaajan_vuoro.hanki_kasi():
@@ -278,11 +278,11 @@ class PeliIkkuna(QMainWindow):
         nappi.setText(f"{kortti.__str__()}")
         nappi.setFixedSize(100, 160)
         nappi.setCheckable(True)
-        self.poydan_korttinapit.append(nappi)
         nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
-        rivi = (len(self.poydan_korttinapit) - 1) // 6
-        sarake = (len(self.poydan_korttinapit) - 1) % 6
+        rivi = (len(self.poydan_korttinapit)) // 6
+        sarake = (len(self.poydan_korttinapit)) % 6
         self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
+        self.poydan_korttinapit.append(nappi)
 
     def poista_korttinappi_poydasta(self, kortti):
         for nappi in self.poydan_korttinapit:
@@ -349,7 +349,7 @@ class PeliIkkuna(QMainWindow):
             vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
                                            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
             if vastaus == QMessageBox.StandardButton.Yes:
-                # self.peli.kirjoita_pelitilanne(self.indeksi)
+                self.peli.kirjoita_pelitilanne(self.indeksi)
                 self.close()
             elif vastaus == QMessageBox.StandardButton.No:
                 self.close()

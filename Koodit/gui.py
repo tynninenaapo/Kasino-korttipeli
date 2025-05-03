@@ -385,10 +385,10 @@ class KierrosPaattyyIkkuna(QWidget):
         self.nappi_layout = QHBoxLayout()
 
         self.lopeta_peli_nappi = QPushButton("Lopeta peli")
-        self.lopeta_peli_nappi.setFixedSize(100, 30)
+        self.lopeta_peli_nappi.setFixedSize(140, 30)
         self.lopeta_peli_nappi.clicked.connect(self.lopeta_peli_painettu)
         self.jatka_pelia_nappi = QPushButton("Jatka peliä")
-        self.jatka_pelia_nappi.setFixedSize(100, 30)
+        self.jatka_pelia_nappi.setFixedSize(140, 30)
         self.jatka_pelia_nappi.clicked.connect(self.jatka_pelia_painettu)
 
         self.nappi_layout.addWidget(self.lopeta_peli_nappi)
@@ -412,6 +412,8 @@ class KierrosPaattyyIkkuna(QWidget):
         self.taulukko.setItem(6, 0, QTableWidgetItem("Pata-2"))
         self.taulukko.setItem(7, 0, QTableWidgetItem("Pisteet (yhteensä)"))
         self.peli.laske_pisteet()
+        for pelaaja in self.peli.pelaajat:
+            pelaaja.pisteet = 16
         for i, pelaaja in enumerate(self.peli.pelaajat):
             self.taulukko.setItem(0, i + 1, QTableWidgetItem(pelaaja.hanki_nimi()))
             self.taulukko.setItem(1, i + 1, QTableWidgetItem(str(len(pelaaja.hanki_pino()))))
@@ -436,33 +438,37 @@ class KierrosPaattyyIkkuna(QWidget):
         if len(kuusitoista_pistetta) == 1:
             self.jatka_pelia_nappi.setEnabled(False)
             self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
+            self.lopeta_peli_nappi.clicked.disconnect(self.lopeta_peli_painettu)
             self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
-            self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {kuusitoista_pistetta[0]}!")
+            self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {kuusitoista_pistetta[0].hanki_nimi()}!")
         elif len(kuusitoista_pistetta) > 1:
             self.jatka_pelia_nappi.setEnabled(False)
             self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
+            self.lopeta_peli_nappi.clicked.disconnect(self.lopeta_peli_painettu)
             self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
             voittaja = kuusitoista_pistetta[0]
             voittajat = []
             for pelaaja in kuusitoista_pistetta:
                 if pelaaja.hanki_pisteet() > voittaja.hanki_pisteet():
                     voittaja = pelaaja
-                elif pelaaja.hanki_pisteet() == voittaja.hanki_pisteet():
-                    voittajat.append(pelaaja)
-                    voittaja.append(voittaja)
+                elif pelaaja.hanki_pisteet() == voittaja.hanki_pisteet() and pelaaja != voittaja:
+                    if voittaja not in voittajat:
+                        voittajat.append(voittaja)
+                    if pelaaja not in voittajat:
+                        voittajat.append(pelaaja)
             if len(voittajat) == 0:
-                self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja}!")
+                self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja.hanki_nimi()}!")
             else:
                 if voittaja.hanki_pisteet() > voittajat[0].hanki_pisteet():
-                    self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja}!")
+                    self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja.hanki_nimi()}!")
                 else:
                     if len(voittajat) == 2:
-                        self.voittaja_tekstikentta.setText(f"Pelaajilla {voittajat[0]} ja {voittajat[1]} tuli tasapeli!")
+                        self.voittaja_tekstikentta.setText(f"Pelaajilla {voittajat[0].hanki_nimi()} ja {voittajat[1].hanki_nimi()} tuli tasapeli!")
                     else:
                         merkkijono = ""
-                        for pelaaja in range(len(voittajat) - 1):
-                            merkkijono += f"{pelaaja}, "
-                        merkkijono += f"ja {voittajat[len(voittajat) - 1]}"
+                        for i in range(len(voittajat) - 1):
+                            merkkijono += f"{voittajat[i].hanki_nimi()}, "
+                        merkkijono += f"ja {voittajat[len(voittajat) - 1].hanki_nimi()}"
                         self.voittaja_tekstikentta.setText(f"Pelaajilla {merkkijono} tuli tasapeli!")
 
     def lopeta_peli_painettu(self):

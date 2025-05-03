@@ -289,12 +289,12 @@ class Peli:
                         eniten_patoja = pelaaja, eniten_patoja
                     else:
                         eniten_patoja = pelaaja
-        if len(eniten_kortteja) == 1:
+        if type(eniten_kortteja) != tuple:
             eniten_kortteja.pisteet += 1
         else:
             for pelaaja in eniten_kortteja:
                 pelaaja.pisteet += 1
-        if len(eniten_patoja) == 1:
+        if type(eniten_patoja) != tuple:
             eniten_patoja.pisteet += 2
         else:
             for pelaaja in eniten_patoja:
@@ -325,10 +325,12 @@ class Peli:
 
     # Valitsee pakasta satunnaisen kortin ja lisää pelaajan käteen
     def nosta_kortti(self, pelaaja):
-        satunnainen_kortti = random.choice(self.poyta.pakka)
-        pelaaja.lisaa_kortti_kateen(satunnainen_kortti)
-        self.poyta.poista_kortti_pakasta(satunnainen_kortti)
-        return satunnainen_kortti
+        if len(self.poyta.pakka) != 0:
+            satunnainen_kortti = random.choice(self.poyta.pakka)
+            pelaaja.lisaa_kortti_kateen(satunnainen_kortti)
+            self.poyta.poista_kortti_pakasta(satunnainen_kortti)
+            return satunnainen_kortti
+        return None
 
     # Parametrina lista kortteja
     # Summaa korttien arvot pöydässä yhteen

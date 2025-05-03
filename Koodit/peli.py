@@ -28,6 +28,10 @@ class Peli:
     # Kirjoittaa pelitilanteen tiedostoon "pelitilanne.txt"
     def kirjoita_pelitilanne(self, indeksi):
         tiedosto = open("pelitilanne.txt", "w")
+        if indeksi < 10:
+            tiedosto.write("1")
+        else:
+            tiedosto.write("2")
         indeksi = f"{indeksi}"
         tiedosto.write(indeksi)
         for pelaaja in self.pelaajat:
@@ -77,7 +81,8 @@ class Peli:
     def lue_pelitilanne(self):
         tiedosto = open("pelitilanne.txt", "r")
         kortit = ""
-        indeksi = tiedosto.read(1)
+        indeksi_pituus = int(tiedosto.read(1))
+        indeksi = int(tiedosto.read(indeksi_pituus))
         for rivi in tiedosto:
             i = 0
             rivi = rivi.rstrip()

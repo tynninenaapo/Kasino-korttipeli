@@ -267,7 +267,6 @@ class PeliIkkuna(QMainWindow):
             self.lisaa_korttinappi_poytaan(self.pelattu_kortti)
             self.pelattu_kortti = None
             self.vuoronvaihto()
-            self.kierros_paattyy()
         else:
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
@@ -337,9 +336,10 @@ class PeliIkkuna(QMainWindow):
 
 
     def kierros_paattyy(self):
-        for kortti in self.peli.poyta.poydan_kortit:
-            self.viimeisin_nostaja.lisaa_kortti_kateen(kortti)
-        self.peli.poyta.poydan_kortit = []
+        if self.viimeisin_nostaja:
+            for kortti in self.peli.poyta.poydan_kortit:
+                self.viimeisin_nostaja.lisaa_kortti_pinoon(kortti)
+            self.peli.poyta.poydan_kortit = []
         self.paatosikkuna = KierrosPaattyyIkkuna(self.peli, self)
         self.paatosikkuna.show()
 
@@ -364,7 +364,7 @@ class KierrosPaattyyIkkuna(QWidget):
         self.peli_ikkuna = peli_ikkuna
 
         self.setWindowFlags(
-            Qt.WindowType.Window | Qt.WindowType.WindowTitleHint | Qt.WindowType.CustomizeWindowHint )
+            Qt.WindowType.Window | Qt.WindowType.WindowTitleHint | Qt.WindowType.CustomizeWindowHint)
 
         self.setWindowTitle("Kierros päättyi!")
         self.setFixedSize((len(self.peli.pelaajat) + 1) * 110, 330)
@@ -384,6 +384,7 @@ class KierrosPaattyyIkkuna(QWidget):
         self.lopeta_peli_nappi.clicked.connect(self.lopeta_peli_painettu)
         self.jatka_pelia_nappi = QPushButton("Jatka peliä")
         self.jatka_pelia_nappi.setFixedSize(100, 30)
+        self.jatka_pelia_nappi.clicked.connect(self.jatka_pelia_painettu)
 
         self.nappi_layout.addWidget(self.lopeta_peli_nappi)
         self.nappi_layout.addWidget(self.jatka_pelia_nappi)
@@ -403,7 +404,7 @@ class KierrosPaattyyIkkuna(QWidget):
         self.taulukko.setItem(4, 0, QTableWidgetItem("Ässät"))
         self.taulukko.setItem(5, 0, QTableWidgetItem("Ruutu-10"))
         self.taulukko.setItem(6, 0, QTableWidgetItem("Pata-2"))
-        self.taulukko.setItem(7, 0, QTableWidgetItem("Pisteet"))
+        self.taulukko.setItem(7, 0, QTableWidgetItem("Pisteet (yhteensä)"))
         self.peli.laske_pisteet()
         for i, pelaaja in enumerate(self.peli.pelaajat):
             self.taulukko.setItem(0, i + 1, QTableWidgetItem(pelaaja.hanki_nimi()))
@@ -438,6 +439,12 @@ class KierrosPaattyyIkkuna(QWidget):
         elif vastaus == QMessageBox.StandardButton.Cancel:
             pass
 
+    def jatka_pelia_painettu(self):
+        self.peli.uusi_kierros()
+        self.uusi_peli_ikkuna = PeliIkkuna(self.peli)
+        self.uusi_peli_ikkuna.show()
+        self.peli_ikkuna.close()
+        self.close()
 
 class KorttiNappi(QPushButton):
 

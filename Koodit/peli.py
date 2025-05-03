@@ -156,6 +156,7 @@ class Peli:
                 kortti = Kortti(maa, arvo)
                 pelaaja.lisaa_kortti_pinoon(kortti)
                 pituus = int(rivi[i:i + 2])
+                i += 2
         i = 2
         pituus = int(kortit[i:i + 2])
         i += 2
@@ -231,7 +232,8 @@ class Peli:
     # Jos kortit ovat lailliset, palauttaa True, muuten False
     # Pelattu_kortti on pelaajan käyttämä Kortti-olio
     # Valitut_kortit on lista pelaajan pöydästä valitsemia Kortti-olioita
-    def tarkista_kortti(self, pelattu_kortti, valitut_kortit):
+    def tarkista_kortti(self, pelattu_kortti, valitut_kortit_alkuperainen):
+        valitut_kortit = valitut_kortit_alkuperainen[:]
         # Tapaus, jossa valittuja kortteja on 1
         if len(valitut_kortit) == 1:
             if pelattu_kortti.hanki_arvo_kadessa() == valitut_kortit[0].hanki_arvo_poydassa():

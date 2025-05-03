@@ -290,14 +290,18 @@ class Peli:
                     pelaaja.pisteet += 1
                 if len(pelaaja.hanki_pino()) >= len(eniten_kortteja.hanki_pino()):
                     if len(pelaaja.pino) == len(eniten_kortteja.pino) and not pelaaja == eniten_kortteja:
-                        eniten_kortteja_lista.append(pelaaja)
-                        eniten_kortteja_lista.append(eniten_kortteja)
+                        if pelaaja not in eniten_kortteja_lista:
+                            eniten_kortteja_lista.append(pelaaja)
+                        if eniten_kortteja not in eniten_kortteja_lista:
+                            eniten_kortteja_lista.append(eniten_kortteja)
                     else:
                         eniten_kortteja = pelaaja
                 if pelaaja.padat_pinossa >= eniten_patoja.padat_pinossa:
                     if pelaaja.padat_pinossa == eniten_patoja.padat_pinossa and not pelaaja == eniten_patoja:
-                        eniten_patoja_lista.append(pelaaja)
-                        eniten_patoja_lista.append(eniten_patoja)
+                        if pelaaja not in eniten_patoja_lista:
+                            eniten_patoja_lista.append(pelaaja)
+                        if eniten_patoja not in eniten_patoja_lista:
+                            eniten_patoja_lista.append(eniten_patoja)
                     else:
                         eniten_patoja = pelaaja
         if len(eniten_kortteja_lista) == 0:

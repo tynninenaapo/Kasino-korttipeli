@@ -6,6 +6,8 @@ from pelaaja import Pelaaja
 from kortti import Kortti
 import time
 
+aloitusvuoro = 0
+
 
 class Aloitusikkuna(QMainWindow):
 
@@ -485,8 +487,13 @@ class KierrosPaattyyIkkuna(QWidget):
             pass
 
     def jatka_pelia_painettu(self):
+        global aloitusvuoro
+        if aloitusvuoro == len(self.peli.pelaajat) - 1:
+            aloitusvuoro = 0
+        else:
+            aloitusvuoro += 1
         self.peli.uusi_kierros()
-        self.uusi_peli_ikkuna = PeliIkkuna(self.peli)
+        self.uusi_peli_ikkuna = PeliIkkuna(self.peli, aloitusvuoro)
         self.uusi_peli_ikkuna.show()
         self.peli_ikkuna.close()
         self.close()

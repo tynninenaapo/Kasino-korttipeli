@@ -266,6 +266,7 @@ class PeliIkkuna(QMainWindow):
                 self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
             self.lisaa_korttinappi_poytaan(self.pelattu_kortti)
             self.pelattu_kortti = None
+            self.valitut_kortit = []
             self.vuoronvaihto()
         else:
             virheviesti = QErrorMessage(self)
@@ -323,15 +324,15 @@ class PeliIkkuna(QMainWindow):
         if nolla_korttia == len(self.peli.pelaajat):
             self.kierros_paattyy()
         else:
-            self.valmis_nappi.setEnabled(False)
             if self.indeksi == len(self.peli.pelaajat) - 1:
                 self.indeksi = 0
             else:
                 self.indeksi += 1
             self.pelaajan_vuoro = self.peli.pelaajat[self.indeksi]
             self.poista_kaikki_pelaajan_korttinapit()
-            self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.pelaajan_vuoro.hanki_nimi()} (10 sekuntia)...")
-            self.paivita_pelaajan_kortit()
+            self.valmis_nappi.setEnabled(False)
+            self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.pelaajan_vuoro.hanki_nimi()} (5 sekuntia)...")
+            QTimer.singleShot(5000, self.paivita_pelaajan_kortit)
             self.valmis_nappi.setEnabled(True)
 
 

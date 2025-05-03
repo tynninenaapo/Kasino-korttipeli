@@ -168,8 +168,10 @@ class PeliIkkuna(QMainWindow):
         self.poyta_tesktikentta = QLabel("Pöydän kortit")
         self.poyta_layout.addWidget(self.poyta_tesktikentta)
 
-        self.poyta_kortit_layout = QGridLayout()
+        self.poyta_kortit_layout = QHBoxLayout()
         self.poyta_layout.addLayout(self.poyta_kortit_layout)
+        self.poyta_kortit_layout2 = QHBoxLayout()
+        self.poyta_layout.addLayout(self.poyta_kortit_layout2)
 
         self.pelaaja_layout = QVBoxLayout()
         self.pelaaja_teksti_nappi_layout = QHBoxLayout()
@@ -211,9 +213,7 @@ class PeliIkkuna(QMainWindow):
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
             nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
-            rivi = len(self.poydan_korttinapit) // 6
-            sarake = len(self.poydan_korttinapit) % 6
-            self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
+            self.poyta_kortit_layout.addWidget(nappi)
             self.poydan_korttinapit.append(nappi)
 
     def paivita_pelaajan_kortit(self):
@@ -279,15 +279,16 @@ class PeliIkkuna(QMainWindow):
         nappi.setFixedSize(100, 160)
         nappi.setCheckable(True)
         nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
-        rivi = (len(self.poydan_korttinapit)) // 6
-        sarake = (len(self.poydan_korttinapit)) % 6
-        self.poyta_kortit_layout.addWidget(nappi, rivi, sarake)
+        if len(self.poydan_korttinapit) <= 7:
+            self.poyta_kortit_layout.addWidget(nappi)
+        else:
+            self.poyta_kortit_layout2.addWidget(nappi)
         self.poydan_korttinapit.append(nappi)
 
     def poista_korttinappi_poydasta(self, kortti):
-        for nappi in self.poydan_korttinapit:
+        for nappi in self.poydan_korttinapit[:]:
             if nappi.hanki_kortti() == kortti:
-                nappi.setParent(None)
+                self.poyta_kortit_layout.removeWidget(nappi)
                 nappi.deleteLater()
                 self.poydan_korttinapit.remove(nappi)
 
@@ -302,15 +303,15 @@ class PeliIkkuna(QMainWindow):
         self.pelaaja_kortti_layout.addWidget(nappi)
 
     def poista_korttinappi_pelaajalta(self, kortti):
-        for nappi in self.pelaajan_korttinapit:
+        for nappi in self.pelaajan_korttinapit[:]:
             if nappi.hanki_kortti() == kortti:
-                nappi.setParent(None)
+                self.pelaaja_kortti_layout.removeWidget(nappi)
                 nappi.deleteLater()
                 self.pelaajan_korttinapit.remove(nappi)
+                break
 
     def poista_kaikki_pelaajan_korttinapit(self):
         for nappi in self.pelaajan_korttinapit:
-            nappi.setParent(None)
             nappi.deleteLater()
         self.pelaajan_korttinapit = []
 
@@ -341,7 +342,7 @@ class PeliIkkuna(QMainWindow):
             for kortti in self.peli.poyta.poydan_kortit:
                 self.viimeisin_nostaja.lisaa_kortti_pinoon(kortti)
             self.peli.poyta.poydan_kortit = []
-        self.paatosikkuna = KierrosPaattyyIkkuna(self.peli, self)
+        self.paatosikkuna = KierrosPaattyyIkkuna(self.peli, self, self.indeksi)
         self.paatosikkuna.show()
 
     def keyPressEvent(self, event):
@@ -358,11 +359,12 @@ class PeliIkkuna(QMainWindow):
 
 class KierrosPaattyyIkkuna(QWidget):
 
-    def __init__(self, peli, peli_ikkuna):
+    def __init__(self, peli, peli_ikkuna, indeksi):
         super().__init__()
 
         self.peli = peli
         self.peli_ikkuna = peli_ikkuna
+        self.indeksi = indeksi
 
         self.setWindowFlags(
             Qt.WindowType.Window | Qt.WindowType.WindowTitleHint | Qt.WindowType.CustomizeWindowHint)
@@ -431,7 +433,7 @@ class KierrosPaattyyIkkuna(QWidget):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
         if vastaus == QMessageBox.StandardButton.Yes:
-            # self.peli.kirjoita_pelitilanne(self.indeksi)
+            self.peli.kirjoita_pelitilanne(self.indeksi)
             self.peli_ikkuna.close()
             self.close()
         elif vastaus == QMessageBox.StandardButton.No:
@@ -452,6 +454,8 @@ class KorttiNappi(QPushButton):
     def __init__(self, kortti):
         super().__init__()
         self.kortti = kortti
+        self.rivi = None
+        self.sarake = None
 
     def hanki_kortti(self):
         return self.kortti

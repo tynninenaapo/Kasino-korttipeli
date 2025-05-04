@@ -1,10 +1,9 @@
-from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QButtonGroup, QErrorMessage, QGridLayout, QMainWindow, QApplication, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
+from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QButtonGroup, QErrorMessage, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont
 from peli import Peli
 from pelaaja import Pelaaja
 from kortti import Kortti
-import time
 
 aloitusvuoro = 0
 
@@ -229,6 +228,7 @@ class PeliIkkuna(QMainWindow):
             nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
             self.pelaaja_kortti_layout.addWidget(nappi)
         self.pelaaja_tekstikentta.setText(f"Omat kortit (Pelaaja \"{self.pelaajan_vuoro.hanki_nimi()}\")")
+        self.valmis_nappi.setEnabled(True)
 
     def poydan_kortti_painettu(self, painettu, kortti):
         if painettu:
@@ -253,9 +253,12 @@ class PeliIkkuna(QMainWindow):
                     self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
                 for kortti in self.valitut_kortit:
                     self.poista_korttinappi_poydasta(kortti)
+                if len(self.poydan_korttinapit) == 0:
+                    self.pelaajan_vuoro.mokit += 1
                 self.pelattu_kortti = None
                 self.valitut_kortit = []
                 self.viimeisin_nostaja = self.pelaajan_vuoro
+                self.valmis_nappi.setEnabled(False)
                 self.vuoronvaihto()
             else:
                 virheviesti = QErrorMessage(self)
@@ -290,7 +293,6 @@ class PeliIkkuna(QMainWindow):
     def poista_korttinappi_poydasta(self, kortti):
         for nappi in self.poydan_korttinapit[:]:
             if nappi.hanki_kortti() == kortti:
-                self.poyta_kortit_layout.removeWidget(nappi)
                 nappi.deleteLater()
                 self.poydan_korttinapit.remove(nappi)
 
@@ -335,8 +337,8 @@ class PeliIkkuna(QMainWindow):
             self.poista_kaikki_pelaajan_korttinapit()
             self.valmis_nappi.setEnabled(False)
             self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.pelaajan_vuoro.hanki_nimi()} (5 sekuntia)...")
-            QTimer.singleShot(5000, self.paivita_pelaajan_kortit)
-            self.valmis_nappi.setEnabled(True)
+            # QTimer.singleShot(5000, self.paivita_pelaajan_kortit)
+            self.paivita_pelaajan_kortit()
 
 
     def kierros_paattyy(self):
@@ -370,6 +372,7 @@ class KierrosPaattyyIkkuna(QWidget):
 
         self.setWindowFlags(
             Qt.WindowType.Window | Qt.WindowType.WindowTitleHint | Qt.WindowType.CustomizeWindowHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
 
         self.setWindowTitle("Kierros päättyi!")
         self.setFixedSize((len(self.peli.pelaajat) + 1) * 110, 360)
@@ -414,64 +417,41 @@ class KierrosPaattyyIkkuna(QWidget):
         self.taulukko.setItem(6, 0, QTableWidgetItem("Pata-2"))
         self.taulukko.setItem(7, 0, QTableWidgetItem("Pisteet (yhteensä)"))
         self.peli.laske_pisteet()
-        for pelaaja in self.peli.pelaajat:
-            pelaaja.pisteet = 16
         for i, pelaaja in enumerate(self.peli.pelaajat):
             self.taulukko.setItem(0, i + 1, QTableWidgetItem(pelaaja.hanki_nimi()))
             self.taulukko.setItem(1, i + 1, QTableWidgetItem(str(len(pelaaja.hanki_pino()))))
             self.taulukko.setItem(2, i + 1, QTableWidgetItem(str(pelaaja.padat_pinossa)))
             self.taulukko.setItem(3, i + 1, QTableWidgetItem(str(pelaaja.hanki_mokit())))
             self.taulukko.setItem(4, i + 1, QTableWidgetItem(str(pelaaja.assat_pinossa)))
-            for kortti in pelaaja.hanki_pino():
-                if kortti.__str__() == "Ruutu-10":
-                    self.taulukko.setItem(5, i + 1, QTableWidgetItem("X"))
-                else:
-                    self.taulukko.setItem(5, i + 1, QTableWidgetItem("O"))
-                if kortti.__str__() == "Pata-2":
-                    self.taulukko.setItem(6, i + 1, QTableWidgetItem("X"))
-                else:
-                    self.taulukko.setItem(6, i + 1, QTableWidgetItem("O"))
-            if len(pelaaja.hanki_pino()) == 0:
-                self.taulukko.setItem(5, i + 1, QTableWidgetItem("O"))
-                self.taulukko.setItem(6, i + 1, QTableWidgetItem("O"))
+            if pelaaja.on_ruutu10:
+                self.taulukko.setItem(5, i + 1, QTableWidgetItem("Kyllä"))
+            else:
+                self.taulukko.setItem(5, i + 1, QTableWidgetItem("Ei"))
+            if pelaaja.on_pata2:
+                self.taulukko.setItem(6, i + 1, QTableWidgetItem("Kyllä"))
+            else:
+                self.taulukko.setItem(6, i + 1, QTableWidgetItem("Ei"))
             self.taulukko.setItem(7, i + 1, QTableWidgetItem(str(pelaaja.hanki_pisteet())))
             if pelaaja.hanki_pisteet() >= 16:
                 kuusitoista_pistetta.append(pelaaja)
-        if len(kuusitoista_pistetta) == 1:
+        if len(kuusitoista_pistetta) >= 1:
             self.jatka_pelia_nappi.setEnabled(False)
             self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
             self.lopeta_peli_nappi.clicked.disconnect(self.lopeta_peli_painettu)
             self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
-            self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {kuusitoista_pistetta[0].hanki_nimi()}!")
-        elif len(kuusitoista_pistetta) > 1:
-            self.jatka_pelia_nappi.setEnabled(False)
-            self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
-            self.lopeta_peli_nappi.clicked.disconnect(self.lopeta_peli_painettu)
-            self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
-            voittaja = kuusitoista_pistetta[0]
-            voittajat = []
-            for pelaaja in kuusitoista_pistetta:
-                if pelaaja.hanki_pisteet() > voittaja.hanki_pisteet():
-                    voittaja = pelaaja
-                elif pelaaja.hanki_pisteet() == voittaja.hanki_pisteet() and pelaaja != voittaja:
-                    if voittaja not in voittajat:
-                        voittajat.append(voittaja)
-                    if pelaaja not in voittajat:
-                        voittajat.append(pelaaja)
-            if len(voittajat) == 0:
-                self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja.hanki_nimi()}!")
+            max_pisteet = max(pelaaja.hanki_pisteet() for pelaaja in self.peli.pelaajat)
+            voittajat = [pelaaja for pelaaja in self.peli.pelaajat if pelaaja.hanki_pisteet() == max_pisteet]
+            if len(voittajat) == 1:
+                self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittajat[0].hanki_nimi()}!")
+            elif len(voittajat) == 2:
+                self.voittaja_tekstikentta.setText(f"Pelaajilla {voittajat[0].hanki_nimi()} ja {voittajat[1].hanki_nimi()} tuli tasapeli!")
             else:
-                if voittaja.hanki_pisteet() > voittajat[0].hanki_pisteet():
-                    self.voittaja_tekstikentta.setText(f"Voittaja on pelaaja {voittaja.hanki_nimi()}!")
-                else:
-                    if len(voittajat) == 2:
-                        self.voittaja_tekstikentta.setText(f"Pelaajilla {voittajat[0].hanki_nimi()} ja {voittajat[1].hanki_nimi()} tuli tasapeli!")
-                    else:
-                        merkkijono = ""
-                        for i in range(len(voittajat) - 1):
-                            merkkijono += f"{voittajat[i].hanki_nimi()}, "
-                        merkkijono += f"ja {voittajat[len(voittajat) - 1].hanki_nimi()}"
-                        self.voittaja_tekstikentta.setText(f"Pelaajilla {merkkijono} tuli tasapeli!")
+                merkkijono = ""
+                for i in range(len(voittajat) - 1):
+                    merkkijono += f"{voittajat[i].hanki_nimi()}, "
+                merkkijono += f"ja {voittajat[len(voittajat) - 1].hanki_nimi()}"
+                self.voittaja_tekstikentta.setText(f"Pelaajilla {merkkijono} tuli tasapeli!")
+
 
     def lopeta_peli_painettu(self):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
@@ -514,8 +494,6 @@ class KorttiNappi(QPushButton):
     def __init__(self, kortti):
         super().__init__()
         self.kortti = kortti
-        self.rivi = None
-        self.sarake = None
 
     def hanki_kortti(self):
         return self.kortti

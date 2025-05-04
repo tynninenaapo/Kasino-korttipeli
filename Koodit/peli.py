@@ -281,10 +281,12 @@ class Peli:
             for kortti in pelaaja.hanki_pino():
                 if kortti.hanki_maa() == "Ruutu" and kortti.hanki_arvo_poydassa() == 10:
                     pelaaja.pisteet += 2
+                    pelaaja.on_ruutu10 = True
                 if kortti.hanki_maa() == "Pata":
                     pelaaja.padat_pinossa += 1
                     if kortti.hanki_arvo_poydassa() == 2:
                         pelaaja.pisteet += 1
+                        pelaaja.on_pata2 = True
                 if kortti.hanki_arvo_poydassa() == 1:
                     pelaaja.assat_pinossa += 1
                     pelaaja.pisteet += 1
@@ -361,6 +363,8 @@ class Peli:
             pelaaja.padat_pinossa = 0
             pelaaja.assat_pinossa = 0
             pelaaja.mokit = 0
+            pelaaja.on_ruutu10 = False
+            pelaaja.on_pata2 = False
         self.poyta.poydan_kortit = []
         self.poyta.pakka = []
 
@@ -372,6 +376,3 @@ class Peli:
         for kortti in kortit:
             summa += kortti.hanki_arvo_poydassa()
         return summa
-
-
-

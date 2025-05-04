@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QButtonGroup, QErrorMessage, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QInputDialog, QListWidget
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, QTimer, QSize
+from PyQt6.QtGui import QFont, QIcon
 from peli import Peli
 from pelaaja import Pelaaja
 from kortti import Kortti
@@ -15,15 +15,35 @@ class Aloitusikkuna(QMainWindow):
         self.setWindowTitle("Kasino")
 
         self.paa_widget = QWidget()
+        self.paa_widget.setStyleSheet("background-color: darkgreen;")
 
         self.layout = QVBoxLayout()
 
         self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.tekstikentta = QLabel("Kasino")
+        self.tekstikentta.setStyleSheet("color: white;")
+        tekstifontti = QFont()
+        tekstifontti.setPointSize(80)
+        tekstifontti.setBold(True)
+        self.tekstikentta.setFont(tekstifontti)
+        self.tekstikentta.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.layout.addWidget(self.tekstikentta)
+
+
+
         self.uusi_peli_nappi = QPushButton("Uusi peli")
+        self.uusi_peli_nappi.setStyleSheet("background-color: orange; color: white;")
         self.jatka_pelia_nappi = QPushButton("Jatka peliä")
+        self.jatka_pelia_nappi.setStyleSheet("background-color: orange; color: white;")
         self.uusi_peli_nappi.setFixedSize(600, 200)
         self.jatka_pelia_nappi.setFixedSize(600, 200)
+
+        fontti = QFont()
+        fontti.setPointSize(30)
+        fontti.setBold(True)
+        self.uusi_peli_nappi.setFont(fontti)
+        self.jatka_pelia_nappi.setFont(fontti)
 
         self.layout.addWidget(self.uusi_peli_nappi)
         self.layout.addWidget(self.jatka_pelia_nappi)
@@ -65,31 +85,44 @@ class Pelaajienlisaysikkuna(QMainWindow):
         self.peli = Peli()
 
         self.paa_widget = QWidget()
+        self.paa_widget.setStyleSheet("background-color: darkgreen;")
         self.paa_layout = QHBoxLayout()
 
         self.nappi_layout = QVBoxLayout()
         self.lista_layout = QVBoxLayout()
 
         self.lisaa_pelaaja_nappi = QPushButton("Lisää pelaaja")
+        self.lisaa_pelaaja_nappi.setStyleSheet("background-color: orange; color: white;")
         self.lisaa_pelaaja_nappi.setFixedSize(600, 200)
         self.lisaa_pelaaja_nappi.clicked.connect(self.kysy_pelaajan_nimea)
 
         self.aloita_peli_nappi = QPushButton("Aloita peli")
+        self.aloita_peli_nappi.setStyleSheet("background-color: orange; color: white;")
         self.aloita_peli_nappi.setFixedSize(600, 200)
         self.aloita_peli_nappi.clicked.connect(self.aloita_peli)
 
+        nappifontti = QFont()
+        nappifontti.setPointSize(30)
+        nappifontti.setBold(True)
+        self.lisaa_pelaaja_nappi.setFont(nappifontti)
+        self.aloita_peli_nappi.setFont(nappifontti)
+
         self.palaa_nappi = QPushButton("Takaisin päävalikkoon")
+        self.palaa_nappi.setStyleSheet("background-color: orange; color: white;")
         self.palaa_nappi.setFixedSize(300, 100)
         self.palaa_nappi.clicked.connect(self.palaa)
 
         self.tekstikentta = QLabel("Lisätyt pelaajat:")
-        fontti = QFont()
-        fontti.setPointSize(17)
-        self.tekstikentta.setFont(fontti)
+        self.tekstikentta.setStyleSheet("color: white;")
+        tekstifontti = QFont()
+        tekstifontti.setPointSize(17)
+        self.tekstikentta.setFont(tekstifontti)
+        self.palaa_nappi.setFont(tekstifontti)
 
 
         self.pelaajalista = QListWidget()
-        self.pelaajalista.setFont(fontti)
+        self.pelaajalista.setStyleSheet("background-color: white;")
+        self.pelaajalista.setFont(tekstifontti)
 
         self.nappi_layout.addWidget(self.lisaa_pelaaja_nappi)
         self.nappi_layout.addWidget(self.aloita_peli_nappi)
@@ -162,19 +195,31 @@ class PeliIkkuna(QMainWindow):
         self.viimeisin_nostaja = None
 
         self.paa_widget = QWidget()
+        self.paa_widget.setStyleSheet("background-color: darkgreen;")
 
         self.paa_layout = QVBoxLayout()
 
+        self.poyta_widget = QWidget()
+        self.poyta_widget.setStyleSheet("background-color: saddlebrown;")
         self.poyta_layout = QVBoxLayout()
-        self.poyta_tesktikentta = QLabel("Pöydän kortit")
-        self.poyta_layout.addWidget(self.poyta_tesktikentta)
+        self.poyta_widget.setLayout(self.poyta_layout)
+        self.poyta_tekstikentta = QLabel("Pöydän kortit")
+        self.poyta_tekstikentta.setStyleSheet("color: white;")
+        self.poyta_layout.addWidget(self.poyta_tekstikentta)
 
         self.poyta_kortit_layout = QHBoxLayout()
         self.poyta_layout.addLayout(self.poyta_kortit_layout)
         self.poyta_kortit_layout2 = QHBoxLayout()
         self.poyta_layout.addLayout(self.poyta_kortit_layout2)
 
+        self.tekstifontti = QFont()
+        self.tekstifontti.setPointSize(17)
+        self.poyta_tekstikentta.setFont(self.tekstifontti)
+
+        self.pelaaja_widget = QWidget()
+        self.pelaaja_widget.setStyleSheet("background-color: saddlebrown;")
         self.pelaaja_layout = QVBoxLayout()
+        self.pelaaja_widget.setLayout(self.pelaaja_layout)
         self.pelaaja_teksti_nappi_layout = QHBoxLayout()
         self.pelaaja_layout.addLayout(self.pelaaja_teksti_nappi_layout)
 
@@ -183,8 +228,13 @@ class PeliIkkuna(QMainWindow):
 
         self.valmis_nappi = QPushButton("Valmis")
         self.valmis_nappi.setFixedSize(100, 20)
+        self.valmis_nappi.setStyleSheet("background-color: orange; color: white;")
         self.valmis_nappi.clicked.connect(self.valmis_painettu)
         self.pelaaja_teksti_nappi_layout.addWidget(self.valmis_nappi)
+
+        self.valmis_fontti = QFont()
+        self.valmis_fontti.setBold(True)
+        self.valmis_nappi.setFont(self.valmis_fontti)
 
         self.pelaaja_kortti_layout = QHBoxLayout()
         self.pelaaja_layout.addLayout(self.pelaaja_kortti_layout)
@@ -198,9 +248,9 @@ class PeliIkkuna(QMainWindow):
         self.paivita_pelaajan_kortit()
 
         self.paa_layout.addStretch(10)
-        self.paa_layout.addLayout(self.poyta_layout)
+        self.paa_layout.addWidget(self.poyta_widget)
         self.paa_layout.addStretch(10)
-        self.paa_layout.addLayout(self.pelaaja_layout)
+        self.paa_layout.addWidget(self.pelaaja_widget)
 
         self.setCentralWidget(self.paa_widget)
         self.paa_widget.setLayout(self.paa_layout)
@@ -210,7 +260,8 @@ class PeliIkkuna(QMainWindow):
     def paivita_poydan_kortit(self):
         for kortti in self.peli.poyta.poydan_kortit:
             nappi = KorttiNappi(kortti)
-            nappi.setText(f"{kortti.__str__()}")
+            nappi.setIcon(QIcon(f"Kuvat/{kortti.__str__()}.png"))
+            nappi.setIconSize(QSize(100, 160))
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
             nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
@@ -220,7 +271,8 @@ class PeliIkkuna(QMainWindow):
     def paivita_pelaajan_kortit(self):
         for kortti in self.pelaajan_vuoro.hanki_kasi():
             nappi = KorttiNappi(kortti)
-            nappi.setText(f"{kortti.__str__()}")
+            nappi.setIcon(QIcon(f"Kuvat/{kortti.__str__()}.png"))
+            nappi.setIconSize(QSize(100, 160))
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
             self.pelaajan_korttinapit.append(nappi)
@@ -228,6 +280,8 @@ class PeliIkkuna(QMainWindow):
             nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
             self.pelaaja_kortti_layout.addWidget(nappi)
         self.pelaaja_tekstikentta.setText(f"Omat kortit (Pelaaja \"{self.pelaajan_vuoro.hanki_nimi()}\")")
+        self.pelaaja_tekstikentta.setFont(self.tekstifontti)
+        self.pelaaja_tekstikentta.setStyleSheet("color: white;")
         self.valmis_nappi.setEnabled(True)
 
     def poydan_kortti_painettu(self, painettu, kortti):
@@ -280,7 +334,8 @@ class PeliIkkuna(QMainWindow):
 
     def lisaa_korttinappi_poytaan(self, kortti):
         nappi = KorttiNappi(kortti)
-        nappi.setText(f"{kortti.__str__()}")
+        nappi.setIcon(QIcon(f"Kuvat/{kortti.__str__()}.png"))
+        nappi.setIconSize(QSize(100, 160))
         nappi.setFixedSize(100, 160)
         nappi.setCheckable(True)
         nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
@@ -298,7 +353,8 @@ class PeliIkkuna(QMainWindow):
 
     def lisaa_korttinappi_pelaajalle(self, kortti):
         nappi = KorttiNappi(kortti)
-        nappi.setText(f"{kortti.__str__()}")
+        nappi.setIcon(QIcon(f"Kuvat/{kortti.__str__()}.png"))
+        nappi.setIconSize(QSize(100, 160))
         nappi.setFixedSize(100, 160)
         nappi.setCheckable(True)
         self.pelaajan_korttinapit.append(nappi)
@@ -337,8 +393,7 @@ class PeliIkkuna(QMainWindow):
             self.poista_kaikki_pelaajan_korttinapit()
             self.valmis_nappi.setEnabled(False)
             self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.pelaajan_vuoro.hanki_nimi()} (5 sekuntia)...")
-            # QTimer.singleShot(5000, self.paivita_pelaajan_kortit)
-            self.paivita_pelaajan_kortit()
+            QTimer.singleShot(5000, self.paivita_pelaajan_kortit)
 
 
     def kierros_paattyy(self):

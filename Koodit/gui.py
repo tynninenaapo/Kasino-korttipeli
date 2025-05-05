@@ -197,7 +197,33 @@ class PeliIkkuna(QMainWindow):
         self.paa_widget = QWidget()
         self.paa_widget.setStyleSheet("background-color: darkgreen;")
 
+        self.layout = QHBoxLayout()
+
         self.paa_layout = QVBoxLayout()
+        self.sivu_layout = QVBoxLayout()
+
+        self.tekstifontti = QFont()
+        self.tekstifontti.setPointSize(17)
+
+        self.palaa_alkuvalikkoon_nappi = QPushButton("Palaa päävalikkoon")
+        self.palaa_alkuvalikkoon_nappi.setFixedSize(300, 100)
+        self.palaa_alkuvalikkoon_nappi.setStyleSheet("background-color: orange; color: white;")
+        self.palaa_alkuvalikkoon_nappi.setFont(self.tekstifontti)
+        self.palaa_alkuvalikkoon_nappi.clicked.connect(self.palaa_paavalikkoon_painettu)
+        self.sivu_layout.addWidget(self.palaa_alkuvalikkoon_nappi)
+
+        self.tapahtumat_teksti = QLabel("Tapahtumat")
+        self.tapahtumat_teksti.setStyleSheet("color: white;")
+        self.tapahtumat_teksti.setFont(self.tekstifontti)
+        self.sivu_layout.addWidget(self.tapahtumat_teksti)
+
+        self.tapahtumat = QListWidget()
+        self.tapahtumat.setStyleSheet("background-color: white;")
+        self.tapahtumat.setFixedSize(400, 600)
+        self.sivu_layout.addWidget(self.tapahtumat)
+
+        self.layout.addLayout(self.sivu_layout)
+        self.layout.addLayout(self.paa_layout)
 
         self.poyta_widget = QWidget()
         self.poyta_widget.setStyleSheet("background-color: saddlebrown;")
@@ -206,15 +232,12 @@ class PeliIkkuna(QMainWindow):
         self.poyta_tekstikentta = QLabel("Pöydän kortit")
         self.poyta_tekstikentta.setStyleSheet("color: white;")
         self.poyta_layout.addWidget(self.poyta_tekstikentta)
+        self.poyta_tekstikentta.setFont(self.tekstifontti)
 
         self.poyta_kortit_layout = QHBoxLayout()
         self.poyta_layout.addLayout(self.poyta_kortit_layout)
         self.poyta_kortit_layout2 = QHBoxLayout()
         self.poyta_layout.addLayout(self.poyta_kortit_layout2)
-
-        self.tekstifontti = QFont()
-        self.tekstifontti.setPointSize(17)
-        self.poyta_tekstikentta.setFont(self.tekstifontti)
 
         self.pelaaja_widget = QWidget()
         self.pelaaja_widget.setStyleSheet("background-color: saddlebrown;")
@@ -253,7 +276,7 @@ class PeliIkkuna(QMainWindow):
         self.paa_layout.addWidget(self.pelaaja_widget)
 
         self.setCentralWidget(self.paa_widget)
-        self.paa_widget.setLayout(self.paa_layout)
+        self.paa_widget.setLayout(self.layout)
 
         self.showFullScreen()
 
@@ -403,6 +426,21 @@ class PeliIkkuna(QMainWindow):
             self.peli.poyta.poydan_kortit = []
         self.paatosikkuna = KierrosPaattyyIkkuna(self.peli, self, self.indeksi)
         self.paatosikkuna.show()
+
+    def palaa_paavalikkoon_painettu(self):
+        vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa päävalikkoon. Haluatko tallentaa pelin?",
+                                       QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
+        if vastaus == QMessageBox.StandardButton.Yes:
+            self.peli.kirjoita_pelitilanne(self.indeksi)
+            self.aloitusikkuna = Aloitusikkuna()
+            self.aloitusikkuna.show()
+            self.close()
+        elif vastaus == QMessageBox.StandardButton.No:
+            self.aloitusikkuna = Aloitusikkuna()
+            self.aloitusikkuna.show()
+            self.close()
+        elif vastaus == QMessageBox.StandardButton.Cancel:
+            pass
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:

@@ -273,7 +273,6 @@ class Peli:
     def laske_pisteet(self):
         for pelaaja in self.pelaajat:
             pelaaja.pisteet += pelaaja.hanki_mokit()
-            pelaaja.mokit = 0
             for kortti in pelaaja.hanki_pino():
                 if kortti.hanki_maa() == "Ruutu" and kortti.hanki_arvo_poydassa() == 10:
                     pelaaja.pisteet += 2
@@ -304,6 +303,8 @@ class Peli:
             for kortti in valitut_kortit:
                 self.poyta.poista_kortti_poydasta(kortti)
                 pelaaja.lisaa_kortti_pinoon(kortti)
+            if len(self.poyta.poydan_kortit) == 0:
+                pelaaja.mokit += 1
             nostettu_kortti = self.nosta_kortti(pelaaja)
             return True, nostettu_kortti
         else:

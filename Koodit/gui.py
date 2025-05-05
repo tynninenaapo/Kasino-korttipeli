@@ -620,7 +620,8 @@ class KierrosPaattyyIkkuna(QWidget):
         if vastaus == QMessageBox.StandardButton.Yes:
             self.jatka_pelia_painettu()
             self.uusi_peli_ikkuna.close()
-            self.peli.kirjoita_pelitilanne(self.indeksi)
+            global aloitusvuoro
+            self.peli.kirjoita_pelitilanne(aloitusvuoro)
             self.peli_ikkuna.close()
             self.close()
         elif vastaus == QMessageBox.StandardButton.No:

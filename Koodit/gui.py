@@ -5,7 +5,8 @@ from peli import Peli
 from pelaaja import Pelaaja
 from kortti import Kortti
 
-aloitusvuoro = 0 # Pitää kirjaa aloitusvuorosta kierrosten edeteesä
+# Pitää kirjaa aloitusvuorosta kierrosten edetessä
+aloitusvuoro = 0
 
 # Ensimmäinen ikkuna, joka aukeaa, kun ohjelman ajaa
 class Aloitusikkuna(QMainWindow):

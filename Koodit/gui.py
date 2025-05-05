@@ -143,9 +143,14 @@ class Pelaajienlisaysikkuna(QMainWindow):
     def kysy_pelaajan_nimea(self):
         teksti, ok = QInputDialog.getText(self, "Anna pelaajan nimi", "Pelaajan nimi:")
         if ok:
-            pelaaja = Pelaaja(teksti)
-            self.peli.lisaa_pelaaja(pelaaja)
-            self.pelaajalista.addItem(pelaaja.hanki_nimi())
+            if len(teksti) == 0:
+                virheviesti = QErrorMessage(self)
+                virheviesti.setWindowTitle("Virhe")
+                virheviesti.showMessage("Nimen tulee olla ainakin 1 merkkiä pitkä!")
+            else:
+                pelaaja = Pelaaja(teksti)
+                self.peli.lisaa_pelaaja(pelaaja)
+                self.pelaajalista.addItem(pelaaja.hanki_nimi())
 
     def aloita_peli(self):
         if len(self.peli.pelaajat) < 2:
@@ -331,8 +336,9 @@ class PeliIkkuna(QMainWindow):
                 for kortti in self.valitut_kortit:
                     self.poista_korttinappi_poydasta(kortti)
                 if len(self.poydan_korttinapit) == 0:
-                    self.pelaajan_vuoro.mokit += 1
-                self.lisaa_tapahtuma()
+                    self.lisaa_tapahtuma(True)
+                else:
+                    self.lisaa_tapahtuma()
                 self.pelattu_kortti = None
                 self.valitut_kortit = []
                 self.viimeisin_nostaja = self.pelaajan_vuoro
@@ -357,21 +363,23 @@ class PeliIkkuna(QMainWindow):
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Sinun tulee valita ainakin yksi pelattava kortti!")
 
-    def lisaa_tapahtuma(self):
+    def lisaa_tapahtuma(self, mokki=False):
+        merkkijono = ""
         if len(self.valitut_kortit) == 0:
-            self.tapahtumat.addItem(f"{self.pelaajan_vuoro.hanki_nimi()} laittoi kortin {self.pelattu_kortti.__str__()} pöytään.")
+            merkkijono += f"{self.pelaajan_vuoro.hanki_nimi()} laittoi kortin {self.pelattu_kortti.__str__()} pöytään."
         elif len(self.valitut_kortit) == 1:
-            self.tapahtumat.addItem(
-                f"{self.pelaajan_vuoro.hanki_nimi()} otti kortin {self.valitut_kortit[0].__str__()} pöydästä.")
+            merkkijono += f"{self.pelaajan_vuoro.hanki_nimi()} otti kortin {self.valitut_kortit[0].__str__()} pöydästä."
         elif len(self.valitut_kortit) == 2:
-            self.tapahtumat.addItem(
-                f"{self.pelaajan_vuoro.hanki_nimi()} otti kortit {self.valitut_kortit[0].__str__()} ja {self.valitut_kortit[1].__str__()} pöydästä.")
+            merkkijono += f"{self.pelaajan_vuoro.hanki_nimi()} otti kortit {self.valitut_kortit[0].__str__()} ja {self.valitut_kortit[1].__str__()} pöydästä."
         else:
-            merkkijono = ""
+            merkkijono += f"{self.pelaajan_vuoro.hanki_nimi()} otti kortit "
             for i in range(len(self.valitut_kortit) - 1):
                 merkkijono += f"{self.valitut_kortit[i].__str__()}, "
-            merkkijono += f"ja {self.valitut_kortit[len(self.valitut_kortit) - 1].__str__()}"
-            self.tapahtumat.addItem(f"{self.pelaajan_vuoro.hanki_nimi()} otti kortit {merkkijono} pöydästä.")
+            merkkijono += f"ja {self.valitut_kortit[len(self.valitut_kortit) - 1].__str__()} pöydästä."
+        if mokki:
+            merkkijono += " (MÖKKI!)"
+        self.tapahtumat.addItem(merkkijono)
+        self.tapahtumat.scrollToBottom()
 
     def lisaa_korttinappi_poytaan(self, kortti):
         nappi = KorttiNappi(kortti)

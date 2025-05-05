@@ -156,9 +156,17 @@ class Pelaajienlisaysikkuna(QMainWindow):
                 virheviesti.setWindowTitle("Virhe")
                 virheviesti.showMessage("Liian pitkä nimi!")
             else:
-                pelaaja = Pelaaja(teksti)
-                self.peli.lisaa_pelaaja(pelaaja)
-                self.pelaajalista.addItem(pelaaja.hanki_nimi())
+                virhe = False
+                for pelaaja in self.peli.pelaajat:
+                    if pelaaja.hanki_nimi() == teksti:
+                        virheviesti = QErrorMessage(self)
+                        virheviesti.setWindowTitle("Virhe")
+                        virheviesti.showMessage(f"Pelaaja nimellä {teksti} on lisätty jo peliin!")
+                        virhe = True
+                if not virhe:
+                    pelaaja = Pelaaja(teksti)
+                    self.peli.lisaa_pelaaja(pelaaja)
+                    self.pelaajalista.addItem(pelaaja.hanki_nimi())
 
     # Kun pelaajia on lisätty tarpeeksi, metodi avaa peli-ikkunan
     def aloita_peli(self):

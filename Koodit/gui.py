@@ -5,9 +5,9 @@ from peli import Peli
 from pelaaja import Pelaaja
 from kortti import Kortti
 
-aloitusvuoro = 0
+aloitusvuoro = 0 # Pitää kirjaa aloitusvuorosta kierrosten edeteesä
 
-
+# Ensimmäinen ikkuna, joka aukeaa, kun ohjelman ajaa
 class Aloitusikkuna(QMainWindow):
 
     def __init__(self):
@@ -29,8 +29,6 @@ class Aloitusikkuna(QMainWindow):
         self.tekstikentta.setFont(tekstifontti)
         self.tekstikentta.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout.addWidget(self.tekstikentta)
-
-
 
         self.uusi_peli_nappi = QPushButton("Uusi peli")
         self.uusi_peli_nappi.setStyleSheet("background-color: orange; color: white;")
@@ -56,11 +54,14 @@ class Aloitusikkuna(QMainWindow):
 
         self.showFullScreen()
 
+    # Uusi peli -nappi avaa pelaajienlisäysikkunan
     def uusi_peli_painettu(self):
         self.pelaajienlisaysikkuna = Pelaajienlisaysikkuna()
         self.pelaajienlisaysikkuna.show()
         self.close()
 
+    # Jatka peliä -nappi lukee pelitilanne.txt-tiedostosta tallennetun pelin
+    # ja avaa suoraan peli-ikkunan
     def jatka_pelia_painettu(self):
         peli = Peli()
         indeksi = peli.lue_pelitilanne()
@@ -68,6 +69,7 @@ class Aloitusikkuna(QMainWindow):
         self.peli_ikkuna.show()
         self.close()
 
+    # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
             vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti poistua pelistä?",
@@ -75,7 +77,7 @@ class Aloitusikkuna(QMainWindow):
             if vastaus == QMessageBox.StandardButton.Yes:
                 self.close()
 
-
+# Uusi peli -napin painamisen jälkeen aukeaa ikkuna, jossa voi lisätä 2-N pelaajaa
 class Pelaajienlisaysikkuna(QMainWindow):
 
     def __init__(self):
@@ -140,6 +142,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
         self.paa_widget.setLayout(self.paa_layout)
         self.showFullScreen()
 
+    # Kysyy pelaajan nimen ja luo pelaaja-olion annetulla nimellä
     def kysy_pelaajan_nimea(self):
         teksti, ok = QInputDialog.getText(self, "Anna pelaajan nimi", "Pelaajan nimi:")
         if ok:
@@ -152,6 +155,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
                 self.peli.lisaa_pelaaja(pelaaja)
                 self.pelaajalista.addItem(pelaaja.hanki_nimi())
 
+    # Kun pelaajia on lisätty tarpeeksi, metodi avaa peli-ikkunan
     def aloita_peli(self):
         if len(self.peli.pelaajat) < 2:
             virheviesti = QErrorMessage(self)
@@ -162,11 +166,13 @@ class Pelaajienlisaysikkuna(QMainWindow):
             self.peli_ikkuna.show()
             self.close()
 
+    # Palauttaa takaisin päävalikkoon
     def palaa(self):
         self.aloitus_ikkuna = Aloitusikkuna()
         self.aloitus_ikkuna.show()
         self.close()
 
+    # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
             vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti poistua pelistä?",
@@ -174,7 +180,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
             if vastaus == QMessageBox.StandardButton.Yes:
                 self.close()
 
-
+# Ikkuna, jossa varsinaista peliä voi pelata
 class PeliIkkuna(QMainWindow):
 
     def __init__(self, peli, indeksi=0, uusi_peli=True):
@@ -285,6 +291,7 @@ class PeliIkkuna(QMainWindow):
 
         self.showFullScreen()
 
+    # Pelin alussa lisää KorttiNappi-oliot pöydälle
     def paivita_poydan_kortit(self):
         for kortti in self.peli.poyta.poydan_kortit:
             nappi = KorttiNappi(kortti)
@@ -296,6 +303,7 @@ class PeliIkkuna(QMainWindow):
             self.poyta_kortit_layout.addWidget(nappi)
             self.poydan_korttinapit.append(nappi)
 
+    # Päivittää KorttiNappi -oliot jokaisen vuoron alussa
     def paivita_pelaajan_kortit(self):
         for kortti in self.pelaajan_vuoro.hanki_kasi():
             nappi = KorttiNappi(kortti)
@@ -312,18 +320,22 @@ class PeliIkkuna(QMainWindow):
         self.pelaaja_tekstikentta.setStyleSheet("color: white;")
         self.valmis_nappi.setEnabled(True)
 
+    # Hoitaa pöydän KorttiNappien toiminnallisuuden
     def poydan_kortti_painettu(self, painettu, kortti):
         if painettu:
             self.valitut_kortit.append(kortti)
         else:
             self.valitut_kortit.remove(kortti)
 
+    # Hoitaa pelaajan KorttiNappien toiminnallisuuden
     def pelaajan_kortti_painettu(self, painettu, kortti):
         if painettu:
             self.pelattu_kortti = kortti
         else:
             self.pelattu_kortti = None
 
+    # Hoitaa valmis -napin toiminnallisuuden, eli tarkistaa
+    # pelaajan valitsemat kortit ja niiden mukaisella tavalla
     def valmis_painettu(self):
         if len(self.pelaajan_vuoro.hanki_kasi()) == 0:
             self.vuoronvaihto()
@@ -363,6 +375,8 @@ class PeliIkkuna(QMainWindow):
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Sinun tulee valita ainakin yksi pelattava kortti!")
 
+    # Lisää tapahtumia listawidget -olioon sitä mukaa, kun
+    # kortteja lisätään ja otetaan pöydästä
     def lisaa_tapahtuma(self, mokki=False):
         merkkijono = ""
         if len(self.valitut_kortit) == 0:
@@ -381,6 +395,7 @@ class PeliIkkuna(QMainWindow):
         self.tapahtumat.addItem(merkkijono)
         self.tapahtumat.scrollToBottom()
 
+    # Lisää yhden KorttiNapin pöytään
     def lisaa_korttinappi_poytaan(self, kortti):
         nappi = KorttiNappi(kortti)
         nappi.setIcon(QIcon(f"Kuvat/{kortti.__str__()}.png"))
@@ -394,12 +409,14 @@ class PeliIkkuna(QMainWindow):
             self.poyta_kortit_layout2.addWidget(nappi)
         self.poydan_korttinapit.append(nappi)
 
+    # Poistaa yhden KorttiNapin pöydästä
     def poista_korttinappi_poydasta(self, kortti):
         for nappi in self.poydan_korttinapit[:]:
             if nappi.hanki_kortti() == kortti:
                 nappi.deleteLater()
                 self.poydan_korttinapit.remove(nappi)
 
+    # Lisää yhden KorttiNapin pelaajalle
     def lisaa_korttinappi_pelaajalle(self, kortti):
         nappi = KorttiNappi(kortti)
         nappi.setIcon(QIcon(f"Kuvat/{kortti.__str__()}.png"))
@@ -411,6 +428,7 @@ class PeliIkkuna(QMainWindow):
         nappi.clicked.connect(lambda painettu, k=kortti: self.pelaajan_kortti_painettu(painettu, k))
         self.pelaaja_kortti_layout.addWidget(nappi)
 
+    # Poistaa yhden KorttiNapin pelaajalta
     def poista_korttinappi_pelaajalta(self, kortti):
         for nappi in self.pelaajan_korttinapit[:]:
             if nappi.hanki_kortti() == kortti:
@@ -419,11 +437,14 @@ class PeliIkkuna(QMainWindow):
                 self.pelaajan_korttinapit.remove(nappi)
                 break
 
+    # Poistaa kaikki pelaajan KorttiNapit vuoron vaihtuessa
     def poista_kaikki_pelaajan_korttinapit(self):
         for nappi in self.pelaajan_korttinapit:
             nappi.deleteLater()
         self.pelaajan_korttinapit = []
 
+    # Toteuttaa kaikki vuoronvaihdossa tarvittavat toimenpiteet
+    # sekä tarkistaa, että pitääkö kierros päättää
     def vuoronvaihto(self):
         nolla_korttia = 0
         for pelaaja in self.peli.pelaajat:
@@ -444,7 +465,7 @@ class PeliIkkuna(QMainWindow):
             self.pelaaja_tekstikentta.setText(f"Vuoro vaihtuu pelaajalle {self.pelaajan_vuoro.hanki_nimi()} (5 sekuntia)...")
             QTimer.singleShot(5000, self.paivita_pelaajan_kortit)
 
-
+    # Päättää kierroksen ja avaa kierroksenpäätösikkunan
     def kierros_paattyy(self):
         if self.viimeisin_nostaja:
             for kortti in self.peli.poyta.poydan_kortit:
@@ -453,6 +474,7 @@ class PeliIkkuna(QMainWindow):
         self.paatosikkuna = KierrosPaattyyIkkuna(self.peli, self, self.indeksi)
         self.paatosikkuna.show()
 
+    # Hoitaa Palaa päävalikkoon -napin toiminnallisuuden
     def palaa_paavalikkoon_painettu(self):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa päävalikkoon. Haluatko tallentaa pelin?",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
@@ -468,6 +490,7 @@ class PeliIkkuna(QMainWindow):
         elif vastaus == QMessageBox.StandardButton.Cancel:
             pass
 
+    # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:
             vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
@@ -480,6 +503,7 @@ class PeliIkkuna(QMainWindow):
             elif vastaus == QMessageBox.StandardButton.Cancel:
                 pass
 
+# Ikkuna, joka aukeaa aina kierroksen päättyessä
 class KierrosPaattyyIkkuna(QWidget):
 
     def __init__(self, peli, peli_ikkuna, indeksi):
@@ -522,7 +546,8 @@ class KierrosPaattyyIkkuna(QWidget):
         self.tayta_taulukko()
         self.show()
 
-
+    # Täyttää taulukko-olioon pelaajien statistiikat
+    # ja ilmoittaa voittajan, jos peli loppuu
     def tayta_taulukko(self):
         kuusitoista_pistetta = []
         self.taulukko.verticalHeader().setVisible(False)
@@ -555,7 +580,7 @@ class KierrosPaattyyIkkuna(QWidget):
                 kuusitoista_pistetta.append(pelaaja)
         if len(kuusitoista_pistetta) >= 1:
             self.jatka_pelia_nappi.setEnabled(False)
-            self.lopeta_peli_nappi.setText("Palaa alkuvalikkoon")
+            self.lopeta_peli_nappi.setText("Palaa päävalikkoon")
             self.lopeta_peli_nappi.clicked.disconnect(self.lopeta_peli_painettu)
             self.lopeta_peli_nappi.clicked.connect(self.peli_loppu)
             max_pisteet = max(pelaaja.hanki_pisteet() for pelaaja in self.peli.pelaajat)
@@ -571,7 +596,7 @@ class KierrosPaattyyIkkuna(QWidget):
                 merkkijono += f"ja {voittajat[len(voittajat) - 1].hanki_nimi()}"
                 self.voittaja_tekstikentta.setText(f"Pelaajilla {merkkijono} tuli tasapeli!")
 
-
+    # Hoitaa lopeta peli -napin toiminnallisuuden
     def lopeta_peli_painettu(self):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
@@ -585,6 +610,7 @@ class KierrosPaattyyIkkuna(QWidget):
         elif vastaus == QMessageBox.StandardButton.Cancel:
             pass
 
+    # Hoitaa jatka peliä -napin toiminnallisuuden
     def jatka_pelia_painettu(self):
         global aloitusvuoro
         if aloitusvuoro == len(self.peli.pelaajat) - 1:
@@ -597,6 +623,9 @@ class KierrosPaattyyIkkuna(QWidget):
         self.peli_ikkuna.close()
         self.close()
 
+    # Pelin päättyessä jatka peliä -nappi deaktivoituu
+    # ja lopeta peli -nappi muuttuu palaa päävalikkoon
+    # -napiksi, josta tämä metodi huolehtii
     def peli_loppu(self):
         vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti palata takaisin alkuvalikkoon?",
                                            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -608,6 +637,8 @@ class KierrosPaattyyIkkuna(QWidget):
         if vastaus == QMessageBox.StandardButton.No:
             pass
 
+# Oma luokka korttinapeille, jotta ne voidaan tunnistaa
+# korttiensa perusteella
 class KorttiNappi(QPushButton):
 
     def __init__(self, kortti):

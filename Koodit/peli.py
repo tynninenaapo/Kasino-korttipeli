@@ -220,13 +220,14 @@ class Peli:
     # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
     def jaa_kortit(self):
         for i in range(4 * (len(self.pelaajat) + 1)):
-            satunnainen_kortti = random.choice(self.poyta.pakka)
-            if i % (len(self.pelaajat) + 1) == len(self.pelaajat):
-                self.poyta.lisaa_kortti_poytaan(satunnainen_kortti)
+            if len(self.poyta.pakka) > 0:
+                satunnainen_kortti = random.choice(self.poyta.pakka)
+                if i % (len(self.pelaajat) + 1) == len(self.pelaajat):
+                    self.poyta.lisaa_kortti_poytaan(satunnainen_kortti)
+                    self.poyta.poista_kortti_pakasta(satunnainen_kortti)
+                    continue
+                self.pelaajat[i % (len(self.pelaajat) + 1)].lisaa_kortti_kateen(satunnainen_kortti)
                 self.poyta.poista_kortti_pakasta(satunnainen_kortti)
-                continue
-            self.pelaajat[i % (len(self.pelaajat) + 1)].lisaa_kortti_kateen(satunnainen_kortti)
-            self.poyta.poista_kortti_pakasta(satunnainen_kortti)
 
     # Tarkistaa korttien laillisuuden
     # Jos kortit ovat lailliset, palauttaa True, muuten False

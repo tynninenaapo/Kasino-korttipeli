@@ -472,6 +472,7 @@ class PeliIkkuna(QMainWindow):
 
     # Päättää kierroksen ja avaa kierroksenpäätösikkunan
     def kierros_paattyy(self):
+        self.palaa_alkuvalikkoon_nappi.setEnabled(False)
         if self.viimeisin_nostaja:
             for kortti in self.peli.poyta.poydan_kortit:
                 self.viimeisin_nostaja.lisaa_kortti_pinoon(kortti)
@@ -606,6 +607,8 @@ class KierrosPaattyyIkkuna(QWidget):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
         if vastaus == QMessageBox.StandardButton.Yes:
+            self.jatka_pelia_painettu()
+            self.uusi_peli_ikkuna.close()
             self.peli.kirjoita_pelitilanne(self.indeksi)
             self.peli_ikkuna.close()
             self.close()

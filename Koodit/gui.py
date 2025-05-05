@@ -173,9 +173,12 @@ class Pelaajienlisaysikkuna(QMainWindow):
 
     # Palauttaa takaisin päävalikkoon
     def palaa(self):
-        self.aloitus_ikkuna = Aloitusikkuna()
-        self.aloitus_ikkuna.show()
-        self.close()
+        vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko palata takaisin päävalikkoon?",
+                                       QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if vastaus == QMessageBox.StandardButton.Yes:
+            self.aloitus_ikkuna = Aloitusikkuna()
+            self.aloitus_ikkuna.show()
+            self.close()
 
     # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):

@@ -151,6 +151,10 @@ class Pelaajienlisaysikkuna(QMainWindow):
                 virheviesti = QErrorMessage(self)
                 virheviesti.setWindowTitle("Virhe")
                 virheviesti.showMessage("Nimen tulee olla ainakin 1 merkkiä pitkä!")
+            elif len(teksti) >= 98:
+                virheviesti = QErrorMessage(self)
+                virheviesti.setWindowTitle("Virhe")
+                virheviesti.showMessage("Liian pitkä nimi!")
             else:
                 pelaaja = Pelaaja(teksti)
                 self.peli.lisaa_pelaaja(pelaaja)

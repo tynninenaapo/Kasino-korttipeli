@@ -332,6 +332,7 @@ class PeliIkkuna(QMainWindow):
                     self.poista_korttinappi_poydasta(kortti)
                 if len(self.poydan_korttinapit) == 0:
                     self.pelaajan_vuoro.mokit += 1
+                self.lisaa_tapahtuma()
                 self.pelattu_kortti = None
                 self.valitut_kortit = []
                 self.viimeisin_nostaja = self.pelaajan_vuoro
@@ -347,6 +348,7 @@ class PeliIkkuna(QMainWindow):
             if nostettu_kortti:
                 self.lisaa_korttinappi_pelaajalle(nostettu_kortti)
             self.lisaa_korttinappi_poytaan(self.pelattu_kortti)
+            self.lisaa_tapahtuma()
             self.pelattu_kortti = None
             self.valitut_kortit = []
             self.vuoronvaihto()
@@ -354,6 +356,22 @@ class PeliIkkuna(QMainWindow):
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Sinun tulee valita ainakin yksi pelattava kortti!")
+
+    def lisaa_tapahtuma(self):
+        if len(self.valitut_kortit) == 0:
+            self.tapahtumat.addItem(f"{self.pelaajan_vuoro.hanki_nimi()} laittoi kortin {self.pelattu_kortti.__str__()} pöytään.")
+        elif len(self.valitut_kortit) == 1:
+            self.tapahtumat.addItem(
+                f"{self.pelaajan_vuoro.hanki_nimi()} otti kortin {self.valitut_kortit[0].__str__()} pöydästä.")
+        elif len(self.valitut_kortit) == 2:
+            self.tapahtumat.addItem(
+                f"{self.pelaajan_vuoro.hanki_nimi()} otti kortit {self.valitut_kortit[0].__str__()} ja {self.valitut_kortit[1].__str__()} pöydästä.")
+        else:
+            merkkijono = ""
+            for i in range(len(self.valitut_kortit) - 1):
+                merkkijono += f"{self.valitut_kortit[i].__str__()}, "
+            merkkijono += f"ja {self.valitut_kortit[len(self.valitut_kortit) - 1].__str__()}"
+            self.tapahtumat.addItem(f"{self.pelaajan_vuoro.hanki_nimi()} otti kortit {merkkijono} pöydästä.")
 
     def lisaa_korttinappi_poytaan(self, kortti):
         nappi = KorttiNappi(kortti)

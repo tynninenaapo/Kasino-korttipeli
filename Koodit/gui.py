@@ -59,7 +59,7 @@ class Aloitusikkuna(QMainWindow):
     def uusi_peli_painettu(self):
         self.pelaajienlisaysikkuna = Pelaajienlisaysikkuna()
         self.pelaajienlisaysikkuna.show()
-        self.close()
+        QTimer.singleShot(1000, self.close)
 
     # Jatka peliä -nappi lukee pelitilanne.txt-tiedostosta tallennetun pelin
     # ja avaa suoraan peli-ikkunan
@@ -73,7 +73,7 @@ class Aloitusikkuna(QMainWindow):
         else:
             self.peli_ikkuna = PeliIkkuna(peli, indeksi, False)
             self.peli_ikkuna.show()
-            self.close()
+            QTimer.singleShot(1000, self.close)
 
     # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):
@@ -182,7 +182,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
         else:
             self.peli_ikkuna = PeliIkkuna(self.peli)
             self.peli_ikkuna.show()
-            self.close()
+            QTimer.singleShot(1000, self.close)
 
     # Palauttaa takaisin päävalikkoon
     def palaa(self):
@@ -191,7 +191,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
         if vastaus == QMessageBox.StandardButton.Yes:
             self.aloitus_ikkuna = Aloitusikkuna()
             self.aloitus_ikkuna.show()
-            self.close()
+            QTimer.singleShot(1000, self.close)
 
     # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):
@@ -505,11 +505,11 @@ class PeliIkkuna(QMainWindow):
             self.peli.kirjoita_pelitilanne(self.indeksi)
             self.aloitusikkuna = Aloitusikkuna()
             self.aloitusikkuna.show()
-            self.close()
+            QTimer.singleShot(1000, self.close)
         elif vastaus == QMessageBox.StandardButton.No:
             self.aloitusikkuna = Aloitusikkuna()
             self.aloitusikkuna.show()
-            self.close()
+            QTimer.singleShot(1000, self.close)
         elif vastaus == QMessageBox.StandardButton.Cancel:
             pass
 
@@ -647,8 +647,8 @@ class KierrosPaattyyIkkuna(QWidget):
         self.peli.uusi_kierros()
         self.uusi_peli_ikkuna = PeliIkkuna(self.peli, aloitusvuoro)
         self.uusi_peli_ikkuna.show()
-        self.peli_ikkuna.close()
         self.close()
+        QTimer.singleShot(1000, self.peli_ikkuna.close)
 
     # Pelin päättyessä jatka peliä -nappi deaktivoituu
     # ja lopeta peli -nappi muuttuu palaa päävalikkoon
@@ -658,7 +658,7 @@ class KierrosPaattyyIkkuna(QWidget):
         if vastaus == QMessageBox.StandardButton.Yes:
             self.aloitusikkuna = Aloitusikkuna()
             self.aloitusikkuna.show()
-            self.peli_ikkuna.close()
+            QTimer.singleShot(1000, self.peli_ikkuna.close)
             self.close()
         if vastaus == QMessageBox.StandardButton.No:
             pass

@@ -81,7 +81,10 @@ class Peli:
     def lue_pelitilanne(self):
         tiedosto = open("pelitilanne.txt", "r")
         kortit = ""
-        indeksi_pituus = int(tiedosto.read(1))
+        indeksi_pituus = tiedosto.read(1)
+        if len(indeksi_pituus) == 0:
+            return None
+        indeksi_pituus = int(indeksi_pituus)
         indeksi = int(tiedosto.read(indeksi_pituus))
         for rivi in tiedosto:
             i = 0

@@ -66,9 +66,14 @@ class Aloitusikkuna(QMainWindow):
     def jatka_pelia_painettu(self):
         peli = Peli()
         indeksi = peli.lue_pelitilanne()
-        self.peli_ikkuna = PeliIkkuna(peli, indeksi, False)
-        self.peli_ikkuna.show()
-        self.close()
+        if indeksi is None:
+            virheviesti = QErrorMessage(self)
+            virheviesti.setWindowTitle("Virhe")
+            virheviesti.showMessage("Ei tallennettua peliä!")
+        else:
+            self.peli_ikkuna = PeliIkkuna(peli, indeksi, False)
+            self.peli_ikkuna.show()
+            self.close()
 
     # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):

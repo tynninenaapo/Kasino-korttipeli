@@ -1,5 +1,3 @@
-from kortti import Kortti
-
 class Pelaaja:
 
     # Pelaaja-olion alustus

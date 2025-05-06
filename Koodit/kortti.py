@@ -2,6 +2,7 @@ ASSA_KADESSA = 14
 PATA2_KADESSA = 15
 RUUTU10_KADESSA = 16
 
+
 class Kortti:
 
     # Kortti-olion alustus
@@ -48,5 +49,5 @@ class Kortti:
 
     # Kortin merkkijonoesitys
     def __str__(self):
-        str = f"{self.maa}-{self.nimi}"
-        return str
+        merkkijono = f"{self.maa}-{self.nimi}"
+        return merkkijono

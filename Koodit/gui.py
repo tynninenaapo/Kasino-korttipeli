@@ -3,10 +3,10 @@ from PyQt6.QtCore import Qt, QTimer, QSize
 from PyQt6.QtGui import QFont, QIcon
 from peli import Peli
 from pelaaja import Pelaaja
-from kortti import Kortti
 
 # Pitää kirjaa aloitusvuorosta kierrosten edetessä
 aloitusvuoro = 0
+
 
 # Ensimmäinen ikkuna, joka aukeaa, kun ohjelman ajaa
 class Aloitusikkuna(QMainWindow):
@@ -78,6 +78,7 @@ class Aloitusikkuna(QMainWindow):
             if vastaus == QMessageBox.StandardButton.Yes:
                 self.close()
 
+
 # Uusi peli -napin painamisen jälkeen aukeaa ikkuna, jossa voi lisätä 2-N pelaajaa
 class Pelaajienlisaysikkuna(QMainWindow):
 
@@ -121,7 +122,6 @@ class Pelaajienlisaysikkuna(QMainWindow):
         tekstifontti.setPointSize(17)
         self.tekstikentta.setFont(tekstifontti)
         self.palaa_nappi.setFont(tekstifontti)
-
 
         self.pelaajalista = QListWidget()
         self.pelaajalista.setStyleSheet("background-color: white;")
@@ -195,6 +195,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
                                            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if vastaus == QMessageBox.StandardButton.Yes:
                 self.close()
+
 
 # Ikkuna, jossa varsinaista peliä voi pelata
 class PeliIkkuna(QMainWindow):
@@ -520,6 +521,7 @@ class PeliIkkuna(QMainWindow):
             elif vastaus == QMessageBox.StandardButton.Cancel:
                 pass
 
+
 # Ikkuna, joka aukeaa aina kierroksen päättyessä
 class KierrosPaattyyIkkuna(QWidget):
 
@@ -647,8 +649,7 @@ class KierrosPaattyyIkkuna(QWidget):
     # ja lopeta peli -nappi muuttuu palaa päävalikkoon
     # -napiksi, josta tämä metodi huolehtii
     def peli_loppu(self):
-        vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti palata takaisin alkuvalikkoon?",
-                                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        vastaus = QMessageBox.question(self, "Vahvistus", "Haluatko varmasti palata takaisin alkuvalikkoon?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if vastaus == QMessageBox.StandardButton.Yes:
             self.aloitusikkuna = Aloitusikkuna()
             self.aloitusikkuna.show()
@@ -656,6 +657,7 @@ class KierrosPaattyyIkkuna(QWidget):
             self.close()
         if vastaus == QMessageBox.StandardButton.No:
             pass
+
 
 # Oma luokka korttinapeille, jotta ne voidaan tunnistaa
 # korttiensa perusteella

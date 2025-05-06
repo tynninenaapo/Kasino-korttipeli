@@ -35,46 +35,46 @@ class Peli:
         indeksi = f"{indeksi}"
         tiedosto.write(indeksi)
         for pelaaja in self.pelaajat:
-            str = ""
+            merkkijono = ""
             if len(pelaaja.hanki_nimi()) < 10:
-                str += f"0{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
+                merkkijono += f"0{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
             else:
-                str += f"{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
+                merkkijono += f"{len(pelaaja.hanki_nimi())}{pelaaja.hanki_nimi()}"
             if pelaaja.hanki_mokit() < 10:
-                str += f"0{pelaaja.hanki_mokit()}"
+                merkkijono += f"0{pelaaja.hanki_mokit()}"
             else:
-                str += f"{pelaaja.hanki_mokit()}"
+                merkkijono += f"{pelaaja.hanki_mokit()}"
             if pelaaja.hanki_pisteet() < 10:
-                str += f"0{pelaaja.hanki_pisteet()}"
+                merkkijono += f"0{pelaaja.hanki_pisteet()}"
             else:
-                str += f"{pelaaja.hanki_pisteet()}"
+                merkkijono += f"{pelaaja.hanki_pisteet()}"
             for kortti in pelaaja.hanki_kasi():
                 if len(kortti.__str__()) < 10:
-                    str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+                    merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
-                    str += f"{len(kortti.__str__())}{kortti.__str__()}"
-            str += "99"
+                    merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
+            merkkijono += "99"
             for kortti in pelaaja.hanki_pino():
                 if len(kortti.__str__()) < 10:
-                    str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+                    merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
-                    str += f"{len(kortti.__str__())}{kortti.__str__()}"
-            str += "99\n"
-            tiedosto.write(str)
-        str = "99"
+                    merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
+            merkkijono += "99\n"
+            tiedosto.write(merkkijono)
+        merkkijono = "99"
         for kortti in self.poyta.pakka:
             if len(kortti.__str__()) < 10:
-                str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+                merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
-                str += f"{len(kortti.__str__())}{kortti.__str__()}"
-        str += "99"
+                merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
+        merkkijono += "99"
         for kortti in self.poyta.poydan_kortit:
             if len(kortti.__str__()) < 10:
-                str += f"0{len(kortti.__str__())}{kortti.__str__()}"
+                merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
-                str += f"{len(kortti.__str__())}{kortti.__str__()}"
-        str += "99"
-        tiedosto.write(str)
+                merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
+        merkkijono += "99"
+        tiedosto.write(merkkijono)
         tiedosto.close()
 
     # Lukee pelitilanteen tiedostosta "pelitilanne.txt"
@@ -104,9 +104,9 @@ class Peli:
             pituus = int(rivi[i:i + 2])
             i += 2
             while pituus != 99:
-                str = rivi[i:i + pituus]
+                merkkijono = rivi[i:i + pituus]
                 i += pituus
-                osat = str.split("-")
+                osat = merkkijono.split("-")
                 if osat[0] == "Pata":
                     maa = "Pata"
                 elif osat[0] == "Risti":
@@ -132,9 +132,9 @@ class Peli:
             pituus = int(rivi[i:i + 2])
             i += 2
             while pituus != 99:
-                str = rivi[i:i + pituus]
+                merkkijono = rivi[i:i + pituus]
                 i += pituus
-                osat = str.split("-")
+                osat = merkkijono.split("-")
                 if osat[0] == "Pata":
                     maa = "Pata"
                 elif osat[0] == "Risti":
@@ -161,9 +161,9 @@ class Peli:
         pituus = int(kortit[i:i + 2])
         i += 2
         while pituus != 99:
-            str = kortit[i:i + pituus]
+            merkkijono = kortit[i:i + pituus]
             i += pituus
-            osat = str.split("-")
+            osat = merkkijono.split("-")
             if osat[0] == "Pata":
                 maa = "Pata"
             elif osat[0] == "Risti":
@@ -189,9 +189,9 @@ class Peli:
         pituus = int(kortit[i:i + 2])
         i += 2
         while pituus != 99:
-            str = kortit[i:i + pituus]
+            merkkijono = kortit[i:i + pituus]
             i += pituus
-            osat = str.split("-")
+            osat = merkkijono.split("-")
             if osat[0] == "Pata":
                 maa = "Pata"
             elif osat[0] == "Risti":
@@ -295,7 +295,6 @@ class Peli:
         for pelaaja in eniten_patoja:
             pelaaja.pisteet += 2
 
-
     # Pelaaja pelaa kortin
     def pelaa_kortti(self, pelaaja, pelattu_kortti, valitut_kortit):
         if self.tarkista_kortti(pelattu_kortti, valitut_kortit):
@@ -310,7 +309,6 @@ class Peli:
             return True, nostettu_kortti
         else:
             return False, None
-
 
     # Pelaaja laittaa kortin pöytään
     def laita_kortti_poytaan(self, pelaaja, kortti):
@@ -340,7 +338,6 @@ class Peli:
             pelaaja.on_pata2 = False
         self.poyta.poydan_kortit = []
         self.poyta.pakka = []
-
 
     # Parametrina lista kortteja
     # Summaa korttien arvot pöydässä yhteen

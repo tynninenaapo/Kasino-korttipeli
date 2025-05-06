@@ -1,8 +1,8 @@
 import unittest
 from kortti import Kortti
-from poyta import Poyta
 from peli import Peli
 from pelaaja import Pelaaja
+
 
 class Testi(unittest.TestCase):
 
@@ -94,7 +94,6 @@ class Testi(unittest.TestCase):
         peli.jaa_kortit()
 
         peli.laske_pisteet()
-
 
 
 if __name__ == '__main__':

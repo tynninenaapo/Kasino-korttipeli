@@ -1,21 +1,18 @@
 # Y2_2025_74912
 
-## Checkpoint6
+## Esittely
+- Projektin repository sisältää Dokumentit-kansion ja Koodit-kansion
 
-## Tämänhetkiset ominaisuudet
+## Tiedostot ja kansiorakenne
 
-Ohjelmaan on toteutettu perusluokat Kortti, Pelaaja ja Pöytä, sekä nämä
-luokat yhteen tuova peliä ylläpitävä luokka Peli. Peli-loukkaan on toteutettu toimiva
-korttientarkistusmetodi, pistelaskumetodi ja pelitilanteen tallennusta varten tiedostoonkirjoitus-
-ja tiedostostalukumetodi. Korttientarkistusmetodille ja tiedostostaluku- sekä tiedostoonkirjoittamismetodeille on toteutettu myös yksikkötestit.
+- Dokumentit-kansiosta löytyy projektisuunnitelma ja projektin dokumentointi
+- Koodit-kansiossa on kaikki ohjelman tarvitsemat python-tiedostot sekä kansio pelikorttien kuvia varten
+
+## Asennusohje
+
+- Ohjelmassa on käytetty ainostaan PyQt6-kirjastoa ja random-moduulia, joka tulee pythonin mukana automaattisesti
 
 ## Käyttöohje
 
-  - Ohjelmaa ei voi ajaa, mutta yksikkötestit voi ajaa testi.py-tiedostosta
-
-## Aikataulu
-
-  - Olen käyttänyt projektiin noin 18 tuntia
-  - Aikataulu on edennyt odotusten mukaisesti
-
-## Muuta
+Ohjelman voi ajaa ajamalla Koodit-kansiosta tiedoston main.py. Mitään erillisiä
+komentoriviargumentteja tai asetustiedostoja ei tarvita.

@@ -658,8 +658,8 @@ class KierrosPaattyyIkkuna(QWidget):
         if vastaus == QMessageBox.StandardButton.Yes:
             self.aloitusikkuna = Aloitusikkuna()
             self.aloitusikkuna.show()
-            QTimer.singleShot(1000, self.peli_ikkuna.close)
             self.close()
+            QTimer.singleShot(1000, self.peli_ikkuna.close)
         if vastaus == QMessageBox.StandardButton.No:
             pass
 

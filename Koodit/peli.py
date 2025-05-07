@@ -4,6 +4,7 @@ from poyta import Poyta
 import random
 
 MAAT = ["Pata", "Risti", "Ruutu", "Hertta"]
+DATALOHKO_PAATTYY = 99
 
 
 # Luokka, joka tuo muut pelissä tarvittavat luokat yhteen
@@ -53,27 +54,27 @@ class Peli:
                     merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
-            merkkijono += "99"
+            merkkijono += f"{DATALOHKO_PAATTYY}"
             for kortti in pelaaja.hanki_pino():
                 if len(kortti.__str__()) < 10:
                     merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
                 else:
                     merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
-            merkkijono += "99\n"
+            merkkijono += f"{DATALOHKO_PAATTYY}\n"
             tiedosto.write(merkkijono)
-        merkkijono = "99"
+        merkkijono = f"{DATALOHKO_PAATTYY}"
         for kortti in self.poyta.pakka:
             if len(kortti.__str__()) < 10:
                 merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
                 merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
-        merkkijono += "99"
+        merkkijono += f"{DATALOHKO_PAATTYY}"
         for kortti in self.poyta.poydan_kortit:
             if len(kortti.__str__()) < 10:
                 merkkijono += f"0{len(kortti.__str__())}{kortti.__str__()}"
             else:
                 merkkijono += f"{len(kortti.__str__())}{kortti.__str__()}"
-        merkkijono += "99"
+        merkkijono += f"{DATALOHKO_PAATTYY}"
         tiedosto.write(merkkijono)
         tiedosto.close()
 
@@ -91,7 +92,7 @@ class Peli:
             rivi = rivi.rstrip()
             nimen_pituus = int(rivi[i:i + 2])
             i += 2
-            if nimen_pituus == 99:
+            if nimen_pituus == DATALOHKO_PAATTYY:
                 kortit = rivi
                 break
             nimi = rivi[i:i + nimen_pituus]
@@ -106,7 +107,7 @@ class Peli:
             i += 2
             pituus = int(rivi[i:i + 2])
             i += 2
-            while pituus != 99:
+            while pituus != DATALOHKO_PAATTYY:
                 merkkijono = rivi[i:i + pituus]
                 i += pituus
                 osat = merkkijono.split("-")
@@ -134,7 +135,7 @@ class Peli:
                 i += 2
             pituus = int(rivi[i:i + 2])
             i += 2
-            while pituus != 99:
+            while pituus != DATALOHKO_PAATTYY:
                 merkkijono = rivi[i:i + pituus]
                 i += pituus
                 osat = merkkijono.split("-")
@@ -163,7 +164,7 @@ class Peli:
         i = 2
         pituus = int(kortit[i:i + 2])
         i += 2
-        while pituus != 99:
+        while pituus != DATALOHKO_PAATTYY:
             merkkijono = kortit[i:i + pituus]
             i += pituus
             osat = merkkijono.split("-")
@@ -191,7 +192,7 @@ class Peli:
             i += 2
         pituus = int(kortit[i:i + 2])
         i += 2
-        while pituus != 99:
+        while pituus != DATALOHKO_PAATTYY:
             merkkijono = kortit[i:i + pituus]
             i += pituus
             osat = merkkijono.split("-")

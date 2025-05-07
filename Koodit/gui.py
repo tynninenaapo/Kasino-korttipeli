@@ -65,19 +65,21 @@ class Aloitusikkuna(QMainWindow):
     # ja avaa suoraan peli-ikkunan
     def jatka_pelia_painettu(self):
         peli = Peli()
-        indeksi = peli.lue_pelitilanne()
-        if indeksi is None:
+        paluuarvo = peli.lue_pelitilanne()
+        if type(paluuarvo) == tuple:
+            indeksi = paluuarvo[0]
+            aloitus_vuoro = paluuarvo[1]
+            self.peli_ikkuna = PeliIkkuna(peli, indeksi, False, aloitus_vuoro)
+            self.peli_ikkuna.show()
+            QTimer.singleShot(1000, self.close)
+        elif paluuarvo is None:
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Ei tallennettua peliä!")
-        elif indeksi == -1:
+        else:
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Virhe tallennetussa pelitiedostossa")
-        else:
-            self.peli_ikkuna = PeliIkkuna(peli, indeksi, False)
-            self.peli_ikkuna.show()
-            QTimer.singleShot(1000, self.close)
 
     # Ohjelmasta voi poistua ESC-näppäimellä
     def keyPressEvent(self, event):
@@ -209,13 +211,15 @@ class Pelaajienlisaysikkuna(QMainWindow):
 # Ikkuna, jossa varsinaista peliä voi pelata
 class PeliIkkuna(QMainWindow):
 
-    def __init__(self, peli, indeksi=0, uusi_peli=True):
+    def __init__(self, peli, indeksi=0, uusi_peli=True, aloitus_vuoro=0):
         super().__init__()
         self.setWindowTitle("Kasino")
 
         self.peli = peli
 
         self.indeksi = indeksi
+        global aloitusvuoro
+        aloitusvuoro = aloitus_vuoro
 
         self.valitut_kortit = []
 
@@ -506,7 +510,7 @@ class PeliIkkuna(QMainWindow):
         vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa päävalikkoon. Haluatko tallentaa pelin?",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
         if vastaus == QMessageBox.StandardButton.Yes:
-            self.peli.kirjoita_pelitilanne(self.indeksi)
+            self.peli.kirjoita_pelitilanne(self.indeksi, aloitusvuoro)
             self.aloitusikkuna = Aloitusikkuna()
             self.aloitusikkuna.show()
             QTimer.singleShot(1000, self.close)
@@ -523,7 +527,7 @@ class PeliIkkuna(QMainWindow):
             vastaus = QMessageBox.question(self, "Vahvistus", "Olet poistumassa pelistä. Haluatko tallentaa pelin?",
                                            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
             if vastaus == QMessageBox.StandardButton.Yes:
-                self.peli.kirjoita_pelitilanne(self.indeksi)
+                self.peli.kirjoita_pelitilanne(self.indeksi, aloitusvuoro)
                 self.close()
             elif vastaus == QMessageBox.StandardButton.No:
                 self.close()
@@ -631,8 +635,7 @@ class KierrosPaattyyIkkuna(QWidget):
         if vastaus == QMessageBox.StandardButton.Yes:
             self.jatka_pelia_painettu()
             self.uusi_peli_ikkuna.close()
-            global aloitusvuoro
-            self.peli.kirjoita_pelitilanne(aloitusvuoro)
+            self.peli.kirjoita_pelitilanne(aloitusvuoro, aloitusvuoro)
             self.peli_ikkuna.close()
             self.close()
         elif vastaus == QMessageBox.StandardButton.No:

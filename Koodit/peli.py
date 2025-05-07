@@ -27,14 +27,18 @@ class Peli:
                 self.poyta.lisaa_kortti_pakkaan(kortti)
 
     # Kirjoittaa pelitilanteen tiedostoon "pelitilanne.txt"
-    def kirjoita_pelitilanne(self, indeksi):
+    def kirjoita_pelitilanne(self, indeksi, aloitusvuoro):
         tiedosto = open("pelitilanne.txt", "w")
         if indeksi < 10:
             tiedosto.write("1")
         else:
             tiedosto.write("2")
-        indeksi = f"{indeksi}"
-        tiedosto.write(indeksi)
+        tiedosto.write(f"{indeksi}")
+        if aloitusvuoro < 10:
+            tiedosto.write("1")
+        else:
+            tiedosto.write("2")
+        tiedosto.write(f"{aloitusvuoro}")
         for pelaaja in self.pelaajat:
             merkkijono = ""
             if len(pelaaja.hanki_nimi()) < 10:
@@ -88,6 +92,8 @@ class Peli:
                 return None
             indeksi_pituus = int(indeksi_pituus)
             indeksi = int(tiedosto.read(indeksi_pituus))
+            aloitusvuoro_pituus = int(tiedosto.read(1))
+            aloitus_vuoro = int(tiedosto.read(aloitusvuoro_pituus))
             for rivi in tiedosto:
                 i = 0
                 rivi = rivi.rstrip()
@@ -220,7 +226,7 @@ class Peli:
                 pituus = int(kortit[i:i + 2])
                 i += 2
             tiedosto.close()
-            return indeksi
+            return indeksi, aloitus_vuoro
         except (OSError, TypeError, ValueError, IndexError):
             return -1
 

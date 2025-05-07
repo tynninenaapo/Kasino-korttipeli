@@ -80,35 +80,93 @@ class Peli:
 
     # Lukee pelitilanteen tiedostosta "pelitilanne.txt"
     def lue_pelitilanne(self):
-        tiedosto = open("pelitilanne.txt", "r")
-        kortit = ""
-        indeksi_pituus = tiedosto.read(1)
-        if len(indeksi_pituus) == 0:
-            return None
-        indeksi_pituus = int(indeksi_pituus)
-        indeksi = int(tiedosto.read(indeksi_pituus))
-        for rivi in tiedosto:
-            i = 0
-            rivi = rivi.rstrip()
-            nimen_pituus = int(rivi[i:i + 2])
-            i += 2
-            if nimen_pituus == DATALOHKO_PAATTYY:
-                kortit = rivi
-                break
-            nimi = rivi[i:i + nimen_pituus]
-            i += nimen_pituus
-            pelaaja = Pelaaja(nimi)
-            self.pelaajat.append(pelaaja)
-            mokit = int(rivi[i:i + 2])
-            pelaaja.mokit = mokit
-            i += 2
-            pisteet = int(rivi[i:i + 2])
-            pelaaja.pisteet = pisteet
-            i += 2
-            pituus = int(rivi[i:i + 2])
+        try:
+            tiedosto = open("pelitilanne.txt", "r")
+            kortit = ""
+            indeksi_pituus = tiedosto.read(1)
+            if len(indeksi_pituus) == 0:
+                return None
+            indeksi_pituus = int(indeksi_pituus)
+            indeksi = int(tiedosto.read(indeksi_pituus))
+            for rivi in tiedosto:
+                i = 0
+                rivi = rivi.rstrip()
+                nimen_pituus = int(rivi[i:i + 2])
+                i += 2
+                if nimen_pituus == DATALOHKO_PAATTYY:
+                    kortit = rivi
+                    break
+                nimi = rivi[i:i + nimen_pituus]
+                i += nimen_pituus
+                pelaaja = Pelaaja(nimi)
+                self.pelaajat.append(pelaaja)
+                mokit = int(rivi[i:i + 2])
+                pelaaja.mokit = mokit
+                i += 2
+                pisteet = int(rivi[i:i + 2])
+                pelaaja.pisteet = pisteet
+                i += 2
+                pituus = int(rivi[i:i + 2])
+                i += 2
+                while pituus != DATALOHKO_PAATTYY:
+                    merkkijono = rivi[i:i + pituus]
+                    i += pituus
+                    osat = merkkijono.split("-")
+                    if osat[0] == "Pata":
+                        maa = "Pata"
+                    elif osat[0] == "Risti":
+                        maa = "Risti"
+                    elif osat[0] == "Ruutu":
+                        maa = "Ruutu"
+                    else:
+                        maa = "Hertta"
+                    if osat[1] == "Assa":
+                        arvo = 1
+                    elif osat[1] == "Kuningas":
+                        arvo = 13
+                    elif osat[1] == "Kuningatar":
+                        arvo = 12
+                    elif osat[1] == "Jatka":
+                        arvo = 11
+                    else:
+                        arvo = int(osat[1])
+                    kortti = Kortti(maa, arvo)
+                    pelaaja.lisaa_kortti_kateen(kortti)
+                    pituus = int(rivi[i:i + 2])
+                    i += 2
+                pituus = int(rivi[i:i + 2])
+                i += 2
+                while pituus != DATALOHKO_PAATTYY:
+                    merkkijono = rivi[i:i + pituus]
+                    i += pituus
+                    osat = merkkijono.split("-")
+                    if osat[0] == "Pata":
+                        maa = "Pata"
+                    elif osat[0] == "Risti":
+                        maa = "Risti"
+                    elif osat[0] == "Ruutu":
+                        maa = "Ruutu"
+                    else:
+                        maa = "Hertta"
+                    if osat[1] == "Assa":
+                        arvo = 1
+                    elif osat[1] == "Kuningas":
+                        arvo = 13
+                    elif osat[1] == "Kuningatar":
+                        arvo = 12
+                    elif osat[1] == "Jatka":
+                        arvo = 11
+                    else:
+                        arvo = int(osat[1])
+                    kortti = Kortti(maa, arvo)
+                    pelaaja.lisaa_kortti_pinoon(kortti)
+                    pituus = int(rivi[i:i + 2])
+                    i += 2
+            i = 2
+            pituus = int(kortit[i:i + 2])
             i += 2
             while pituus != DATALOHKO_PAATTYY:
-                merkkijono = rivi[i:i + pituus]
+                merkkijono = kortit[i:i + pituus]
                 i += pituus
                 osat = merkkijono.split("-")
                 if osat[0] == "Pata":
@@ -130,13 +188,13 @@ class Peli:
                 else:
                     arvo = int(osat[1])
                 kortti = Kortti(maa, arvo)
-                pelaaja.lisaa_kortti_kateen(kortti)
-                pituus = int(rivi[i:i + 2])
+                self.poyta.lisaa_kortti_pakkaan(kortti)
+                pituus = int(kortit[i:i + 2])
                 i += 2
-            pituus = int(rivi[i:i + 2])
+            pituus = int(kortit[i:i + 2])
             i += 2
             while pituus != DATALOHKO_PAATTYY:
-                merkkijono = rivi[i:i + pituus]
+                merkkijono = kortit[i:i + pituus]
                 i += pituus
                 osat = merkkijono.split("-")
                 if osat[0] == "Pata":
@@ -158,68 +216,13 @@ class Peli:
                 else:
                     arvo = int(osat[1])
                 kortti = Kortti(maa, arvo)
-                pelaaja.lisaa_kortti_pinoon(kortti)
-                pituus = int(rivi[i:i + 2])
+                self.poyta.lisaa_kortti_poytaan(kortti)
+                pituus = int(kortit[i:i + 2])
                 i += 2
-        i = 2
-        pituus = int(kortit[i:i + 2])
-        i += 2
-        while pituus != DATALOHKO_PAATTYY:
-            merkkijono = kortit[i:i + pituus]
-            i += pituus
-            osat = merkkijono.split("-")
-            if osat[0] == "Pata":
-                maa = "Pata"
-            elif osat[0] == "Risti":
-                maa = "Risti"
-            elif osat[0] == "Ruutu":
-                maa = "Ruutu"
-            else:
-                maa = "Hertta"
-            if osat[1] == "Assa":
-                arvo = 1
-            elif osat[1] == "Kuningas":
-                arvo = 13
-            elif osat[1] == "Kuningatar":
-                arvo = 12
-            elif osat[1] == "Jatka":
-                arvo = 11
-            else:
-                arvo = int(osat[1])
-            kortti = Kortti(maa, arvo)
-            self.poyta.lisaa_kortti_pakkaan(kortti)
-            pituus = int(kortit[i:i + 2])
-            i += 2
-        pituus = int(kortit[i:i + 2])
-        i += 2
-        while pituus != DATALOHKO_PAATTYY:
-            merkkijono = kortit[i:i + pituus]
-            i += pituus
-            osat = merkkijono.split("-")
-            if osat[0] == "Pata":
-                maa = "Pata"
-            elif osat[0] == "Risti":
-                maa = "Risti"
-            elif osat[0] == "Ruutu":
-                maa = "Ruutu"
-            else:
-                maa = "Hertta"
-            if osat[1] == "Assa":
-                arvo = 1
-            elif osat[1] == "Kuningas":
-                arvo = 13
-            elif osat[1] == "Kuningatar":
-                arvo = 12
-            elif osat[1] == "Jatka":
-                arvo = 11
-            else:
-                arvo = int(osat[1])
-            kortti = Kortti(maa, arvo)
-            self.poyta.lisaa_kortti_poytaan(kortti)
-            pituus = int(kortit[i:i + 2])
-            i += 2
-        tiedosto.close()
-        return indeksi
+            tiedosto.close()
+            return indeksi
+        except (OSError, TypeError, ValueError, IndexError):
+            return -1
 
     # Jakaa 4 korttia jokaiselle pelaajalle ja laittaa 4 korttia pöytään
     def jaa_kortit(self):

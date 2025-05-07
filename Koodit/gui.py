@@ -70,6 +70,10 @@ class Aloitusikkuna(QMainWindow):
             virheviesti = QErrorMessage(self)
             virheviesti.setWindowTitle("Virhe")
             virheviesti.showMessage("Ei tallennettua peliä!")
+        elif indeksi == -1:
+            virheviesti = QErrorMessage(self)
+            virheviesti.setWindowTitle("Virhe")
+            virheviesti.showMessage("Virhe tallennetussa pelitiedostossa")
         else:
             self.peli_ikkuna = PeliIkkuna(peli, indeksi, False)
             self.peli_ikkuna.show()

@@ -267,12 +267,14 @@ class PeliIkkuna(QMainWindow):
         self.layout.addLayout(self.paa_layout)
 
         self.poyta_widget = QWidget()
+        self.poyta_widget.setMinimumHeight(230)
         self.poyta_widget.setStyleSheet("background-color: saddlebrown;")
         self.poyta_layout = QVBoxLayout()
         self.poyta_widget.setLayout(self.poyta_layout)
         self.poyta_tekstikentta = QLabel("Pöydän kortit")
         self.poyta_tekstikentta.setStyleSheet("color: white;")
         self.poyta_layout.addWidget(self.poyta_tekstikentta)
+        self.poyta_layout.addStretch()
         self.poyta_tekstikentta.setFont(self.tekstifontti)
 
         self.poyta_kortit_layout = QHBoxLayout()
@@ -281,7 +283,7 @@ class PeliIkkuna(QMainWindow):
         self.poyta_layout.addLayout(self.poyta_kortit_layout2)
 
         self.pelaaja_widget = QWidget()
-        self.pelaaja_widget.setFixedSize(800, 230)
+        self.pelaaja_widget.setFixedSize(870, 230)
         self.pelaaja_widget.setStyleSheet("background-color: saddlebrown;")
         self.pelaaja_layout = QVBoxLayout()
         self.pelaaja_widget.setLayout(self.pelaaja_layout)

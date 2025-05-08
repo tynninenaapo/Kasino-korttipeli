@@ -281,11 +281,13 @@ class PeliIkkuna(QMainWindow):
         self.poyta_layout.addLayout(self.poyta_kortit_layout2)
 
         self.pelaaja_widget = QWidget()
+        self.pelaaja_widget.setFixedSize(800, 230)
         self.pelaaja_widget.setStyleSheet("background-color: saddlebrown;")
         self.pelaaja_layout = QVBoxLayout()
         self.pelaaja_widget.setLayout(self.pelaaja_layout)
         self.pelaaja_teksti_nappi_layout = QHBoxLayout()
         self.pelaaja_layout.addLayout(self.pelaaja_teksti_nappi_layout)
+        self.pelaaja_layout.addStretch()
 
         self.pelaaja_tekstikentta = QLabel()
         self.pelaaja_teksti_nappi_layout.addWidget(self.pelaaja_tekstikentta)

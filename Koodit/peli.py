@@ -234,7 +234,7 @@ class Peli:
     def jaa_kortit(self):
         for i in range(4 * (len(self.pelaajat) + 1)):
             if len(self.poyta.pakka) > 0:
-                satunnainen_kortti = random.choice(self.poyta.pakka)
+                satunnainen_kortti = random.choice(self.poyta.pakka) # https://docs.python.org/3/library/random.html
                 if i % (len(self.pelaajat) + 1) == len(self.pelaajat):
                     self.poyta.lisaa_kortti_poytaan(satunnainen_kortti)
                     self.poyta.poista_kortti_pakasta(satunnainen_kortti)
@@ -269,6 +269,7 @@ class Peli:
         if self.summaa_kortit_poydassa(valitut_kortit) % pelattu_kortti.hanki_arvo_kadessa() == 0:
             uusi_valitut_kortit = []
             # Käydään läpi kaikki mahdolliset osajoukot käyttäen bittitason operaatioita
+            # Lähde: https://www.geeksforgeeks.org/iterating-over-all-possible-combinations-in-an-array-using-bits
             for maski in range(1, 2 ** len(valitut_kortit)):
                 osajoukko = []
                 summa = 0
@@ -333,7 +334,7 @@ class Peli:
     # Valitsee pakasta satunnaisen kortin ja lisää pelaajan käteen
     def nosta_kortti(self, pelaaja):
         if len(self.poyta.pakka) != 0:
-            satunnainen_kortti = random.choice(self.poyta.pakka)
+            satunnainen_kortti = random.choice(self.poyta.pakka) # https://docs.python.org/3/library/random.html
             pelaaja.lisaa_kortti_kateen(satunnainen_kortti)
             self.poyta.poista_kortti_pakasta(satunnainen_kortti)
             return satunnainen_kortti

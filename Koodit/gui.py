@@ -333,6 +333,7 @@ class PeliIkkuna(QMainWindow):
             nappi.setIconSize(QSize(100, 160))
             nappi.setFixedSize(100, 160)
             nappi.setCheckable(True)
+            # Lähde: https://www.youtube.com/watch?v=HQNiSfb795A
             nappi.clicked.connect(lambda painettu, k=kortti: self.poydan_kortti_painettu(painettu, k))
             self.poyta_kortit_layout.addWidget(nappi)
             self.poydan_korttinapit.append(nappi)

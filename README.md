@@ -1,4 +1,4 @@
-# Y2_2025_74912
+# Kasino-korttipeli
 
 ## Esittely
 - Projektin repository sisältää Dokumentit-kansion ja Koodit-kansion
@@ -10,9 +10,21 @@
 
 ## Asennusohje
 
-- Ohjelmassa on käytetty ainostaan PyQt6-kirjastoa ja random-moduulia, joka tulee pythonin mukana automaattisesti
-
+Ohjelma käyttää PyQt6-kirjastoa, joka pitää asentaa ennen kuin ohjelmaa voi käyttää.
+Navigoi Koodit-kansioon ja asenna PyQt6:
+### Windows
+```
+pip install pyqt6
+```
+### Linux
+```
+sudo apt install pyqt6
+```
+(tai muu vastaava asennuskomento jakelupaketista riippuen)
 ## Käyttöohje
 
 Ohjelman voi ajaa ajamalla Koodit-kansiosta tiedoston main.py. Mitään erillisiä
 komentoriviargumentteja tai asetustiedostoja ei tarvita.
+```
+python3 main.py
+```

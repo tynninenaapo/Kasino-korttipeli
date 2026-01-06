@@ -18,7 +18,7 @@ pip install pyqt6
 ```
 ### Linux
 ```
-sudo apt install pyqt6
+sudo apt install python3-pyqt6
 ```
 (tai muu vastaava asennuskomento jakelupaketista riippuen)
 ## Käyttöohje

@@ -135,7 +135,7 @@ class Pelaajienlisaysikkuna(QMainWindow):
         self.palaa_nappi.setFont(tekstifontti)
 
         self.pelaajalista = QListWidget()
-        self.pelaajalista.setStyleSheet("background-color: white;")
+        self.pelaajalista.setStyleSheet("background-color: white; color: black")
         self.pelaajalista.setFont(tekstifontti)
 
         self.nappi_layout.addWidget(self.lisaa_pelaaja_nappi)
@@ -259,7 +259,7 @@ class PeliIkkuna(QMainWindow):
         self.sivu_layout.addWidget(self.tapahtumat_teksti)
 
         self.tapahtumat = QListWidget()
-        self.tapahtumat.setStyleSheet("background-color: white;")
+        self.tapahtumat.setStyleSheet("background-color: white; color: black;")
         self.tapahtumat.setFixedSize(400, 600)
         self.sivu_layout.addWidget(self.tapahtumat)
 
